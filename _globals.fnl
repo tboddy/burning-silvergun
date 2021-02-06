@@ -184,7 +184,7 @@
 	:colors-arcade colors-arcade
 
 	:fullscreen false
-	:started true
+	:started false
 	:game-over false
 	:time-over false
 

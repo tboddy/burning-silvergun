@@ -174,8 +174,17 @@
 			(g.mask :half (fn [] (love.graphics.circle :line c-x c-y (/ size 2))))
 			(love.graphics.setScissor))
 
+		(fn doggy []
+			(local doggy-color :brown)
+			(g.set-color doggy-color)
+			(love.graphics.rectangle :fill x y size (- size 1) (/ radius 2))
+			(g.set-color doggy-color)
+			(love.graphics.rectangle :fill x y size size (/ radius 2))
+			(g.set-color platform-color)
+			(g.mask :half (fn [] (love.graphics.rectangle :fill x (+ y 1) size (- size 1) (/ radius 2)))))
+
 		(when (= level 1)
-			(when (or (= block.type :o) (= block.type :x) (= block.type :X) (= block.type :O)) (floor-shadow))
+			(when (or (= block.type :o) (= block.type :x) (= block.type :X) (= block.type :O) (= block.type :d)) (floor-shadow))
 			(when (= block.type :|) (pipe))
 			(when (= block.type :-) (pipe true))
 			(when (= block.type :<) (pipe true true))
@@ -185,13 +194,14 @@
 			(when (= block.type :=) (pipe-corner 3)))
 
 		(when (= level 2)
-			(when (or (= block.type :o) (= block.type :x) (= block.type :X) (= block.type :O)) (floor)))
+			(when (or (= block.type :o) (= block.type :x) (= block.type :X) (= block.type :O) (= block.type :d)) (floor)))
 
 		(when (= level 3)
-			(when (or (= block.type :x) (= block.type :X)) (point false true))
+			(when (or (= block.type :x) (= block.type :X) (= block.type :d)) (point false true))
 			(when (= block.type :O) (destroyed)))
 
 		(when (= level 4)
+			(when (= block.type :d) (doggy))
 			(when (= block.type :x) (point))
 			(when (= block.type :X) (point true)))
 

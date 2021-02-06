@@ -4,7 +4,7 @@
 
 (var clock 0)
 (var overlay-type 4)
-(var scene 1)
+(var scene 3)
 (local offset 14)
 (local s-offset 10)
 (local fade-interval 10)
@@ -68,7 +68,7 @@
 ; main menu
 ; ------------------------------------
 
-(local menu-items ["START EASY" "START HARD" "EXIT"])
+(local menu-items ["START EASY" "START HARD" "INFO" "EXIT"])
 (var active-menu 1)
 (var can-move false)
 (var moving false)
@@ -88,8 +88,8 @@
 (fn choose-menu-item []
 	(when (= active-menu 1)
 		(g.init-game)
-		(set g.started true)
-		))
+		(set g.started true))
+	(when (= active-menu 3) (set scene 4)))
 
 (fn update-menu-controls []
 	(when (and (not moving) (controls.up))
@@ -116,7 +116,7 @@
 		(update-menu-controls)))
 
 (fn draw-menu []
-	(var y (* g.grid 9.5))
+	(var y (* g.grid 9.125))
 	(for [i 1 (length menu-items)]
 		(g.label (. menu-items i) nil y nil :center nil nil true)
 		(when (and can-move (= i active-menu))
@@ -141,6 +141,38 @@
 
 
 ; ------------------------------------
+; info screen
+; ------------------------------------
+
+(local controls-limit-1 (- g.width (* g.grid 5.5)))
+(local controls-limit-2 (- g.width (* g.grid 4)))
+(local controls-limit-3 (- g.width (* g.grid 6)))
+(local controls-limit-4 (- g.width (* g.grid 3.5)))
+(local controls-labels [
+	{:label "KEYBOARD" :margin 16 :big true}
+	{:label "MOVE: ARROW KEYS"}
+	{:label "SHOT 1: Z" :limit controls-limit-1}
+	{:label "SHOT 2: X" :limit controls-limit-1}
+	{:label "SHOT 3: C" :limit controls-limit-1}
+	{:label "PAUSE: ESC" :limit controls-limit-2}
+	{:label "RESTART: R" :limit controls-limit-3 :margin 14}
+	{:label "GAMEPAD" :margin 16 :big true}
+	{:label "MOVE: DPAD/LSTICK"}
+	{:label "SHOT 1: A" :limit controls-limit-3}
+	{:label "SHOT 2: B" :limit controls-limit-3}
+	{:label "SHOT 3: C" :limit controls-limit-3}
+	{:label "PAUSE: START" :limit controls-limit-4 :margin 16}
+	{:label "SHOOT TO RETURN"}])
+
+(fn draw-controls []
+	(var y 18)
+	(for [i 1 (length controls-labels)]
+		(local row (. controls-labels i))
+		(g.label row.label nil y nil :center (if row.limit row.limit nil) (if row.big true nil) true)
+		(set y (+ y (if row.margin row.margin 0) s-offset))))
+
+
+; ------------------------------------
 ; extern
 ; ------------------------------------
 
@@ -162,7 +194,7 @@
 	:update (fn []
 		(when (= scene 1) (update-splash 2))
 		(when (= scene 2) (update-splash 3))
-		(when (>= scene 3) (update-menu))
+		(when (= scene 3) (update-menu))
 		(set clock (+ clock 1)))
 
 	:draw (fn []
@@ -171,11 +203,12 @@
 		(g.clear-color)
 		(when (= scene 1) (draw-splash-1))
 		(when (= scene 2) (draw-splash-2))
+		(when (or (= scene 3) (= scene 4)) (love.graphics.draw images.bg 0 0))
 		(when (= scene 3)
-			(love.graphics.draw images.bg 0 0)
 			(draw-title)
 			(draw-menu)
 			(draw-scores))
+		(when (= scene 4) (draw-controls))
 		(when (< 0 overlay-type) (draw-overlay)))
 
 
