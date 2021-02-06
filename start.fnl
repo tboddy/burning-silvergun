@@ -47,9 +47,9 @@
 
 (fn draw-splash-1 []
 	(var y (- (/ g.height 2) offset))
-	(g.label "THE ISOLATION CARAVAN" nil y nil :center)
+	(g.label "THE ISOLATION CARAVAN" nil y nil :center nil nil true)
 	(set y (+ y offset))
-	(g.label "TOUHOU GAME JAM VOL.6" nil y nil :center))
+	(g.label "TOUHOU GAME JAM VOL.6" nil y nil :center nil nil true))
 	; (love.graphics.draw images.ilya (- g.width (g.img-width images.ilya) 10) (- g.height (g.img-height images.ilya) 8)))
 
 (fn draw-splash-2 []
@@ -57,11 +57,11 @@
 	(var y (* g.grid 3.25))
 	(love.graphics.draw images.bee bee-x y)
 	(set y (+ y (* 1.25 g.grid) (g.img-height images.bee)))
-	(g.label "PROGRAMMING, DESIGN," nil y nil :center)
+	(g.label "PROGRAMMING, DESIGN," nil y nil :center nil nil true)
 	(set y (+ y offset))
-	(g.label "ART, AND SOUND" nil y nil :center)
+	(g.label "ART, AND SOUND" nil y nil :center nil nil true)
 	(set y (+ y offset))
-	(g.label "2021 T.BODDY" nil y nil :center))
+	(g.label "2021 T.BODDY" nil y nil :center nil nil true))
 
 
 ; ------------------------------------
