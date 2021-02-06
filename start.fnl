@@ -4,12 +4,13 @@
 
 (var clock 0)
 (var overlay-type 4)
-(var scene 1)
+(var scene 3)
 (local offset 14)
 (local s-offset 10)
 (local fade-interval 10)
 
 (var images nil)
+(var starting false)
 
 
 ; ------------------------------------
@@ -88,8 +89,8 @@
 (fn choose-menu-item []
 	(when (or (= active-menu 1) (= active-menu 2))
 		(set g.hard-mode (if (= active-menu 2) true false))
-		(g.init-game)
-		(set g.started true))
+		(set clock -1)
+		(set starting true))
 	(when (= active-menu 3) (set scene 4))
 	(when (= active-menu 4) (love.event.quit)))
 
@@ -116,6 +117,15 @@
 	(when (>= clock (* fade-interval 5))
 		(set can-move true)
 		(update-menu-controls)))
+
+(fn update-starting []
+	(trigger-overlay fade-interval 1)
+	(trigger-overlay (* fade-interval 2) 2)
+	(trigger-overlay (* fade-interval 3) 3)
+	(trigger-overlay (* fade-interval 4) 4)
+	(when (>= clock (* fade-interval 5))
+		(set g.started true)
+		(g.init-game)))
 
 (fn menu-arrow [x y]
 		(local size 8)
@@ -214,6 +224,7 @@
 		(when (= scene 2) (update-splash 3))
 		(when (= scene 3) (update-menu))
 		(when (= scene 4) (update-controls))
+		(when starting (update-starting))
 		(set clock (+ clock 1)))
 
 	:draw (fn []

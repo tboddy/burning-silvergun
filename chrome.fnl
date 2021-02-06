@@ -9,6 +9,7 @@
 (local time-limit (* 60 2))
 (var time-left time-limit)
 
+(var start-clock 0)
 
 
 ; ------------------------------------
@@ -44,6 +45,20 @@
 
 
 ; ------------------------------------
+; start
+; ------------------------------------
+
+(fn draw-start []
+	(g.set-color :black)
+	(local fade-interval 10)
+	(when (< start-clock fade-interval) (love.graphics.rectangle :fill 0 0 g.width g.height))
+	(when (and (>= start-clock fade-interval) (< start-clock (* fade-interval 2))) (g.mask :most (fn [] (love.graphics.rectangle :fill 0 0 g.width g.height))))
+	(when (and (>= start-clock (* fade-interval 2)) (< start-clock (* fade-interval 3))) (g.mask :half (fn [] (love.graphics.rectangle :fill 0 0 g.width g.height))))
+	(when (and (>= start-clock (* fade-interval 3)) (< start-clock (* fade-interval 4))) (g.mask :quarter (fn [] (love.graphics.rectangle :fill 0 0 g.width g.height))))
+	(g.clear-color))
+
+
+; ------------------------------------
 ; extern
 ; ------------------------------------
 
@@ -59,7 +74,8 @@
 		(when (<= time-left 0)
 			(set time-left 0)
 			(set g.game-over true)
-			(set g.time-over true)))
+			(set g.time-over true))
+		(set start-clock (+ start-clock 1)))
 
 	:draw (fn []
 		(draw-score)
@@ -68,6 +84,7 @@
 		; (draw-debug)
 		(when (and g.game-over (not g.time-over)) (draw-big-overlay "GAME OVER"))
 		(when (and g.game-over g.time-over) (draw-big-overlay "TIME OVER"))
+		(draw-start)
 		)
 
 
