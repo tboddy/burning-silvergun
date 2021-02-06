@@ -4,7 +4,7 @@
 
 (var clock 0)
 (var overlay-type 4)
-(var scene 3)
+(var scene 1)
 (local offset 14)
 (local s-offset 10)
 (local fade-interval 10)
@@ -90,7 +90,8 @@
 		(set g.hard-mode (if (= active-menu 2) true false))
 		(g.init-game)
 		(set g.started true))
-	(when (= active-menu 3) (set scene 4)))
+	(when (= active-menu 3) (set scene 4))
+	(when (= active-menu 4) (love.event.quit)))
 
 (fn update-menu-controls []
 	(when (and (not moving) (controls.up))
@@ -116,17 +117,27 @@
 		(set can-move true)
 		(update-menu-controls)))
 
+(fn menu-arrow [x y]
+		(local size 8)
+		(love.graphics.polygon :fill x y (+ x size) (+ y (/ size 2)) x (+ y size)))
+
 (fn draw-menu []
 	(var y (* g.grid 9.125))
 	(for [i 1 (length menu-items)]
 		(g.label (. menu-items i) nil y nil :center nil nil true)
 		(when (and can-move (= i active-menu))
 			(local x (* g.grid 4.25))
-			(local size 8)
 			(g.set-color :black)
-			(love.graphics.polygon :fill x y (+ x size 1) (+ y (/ size 2) 1) x (+ y size))
+			(menu-arrow (- x 1) y) ; fuck outta here lmao
+			(menu-arrow (+ x 1) y)
+			(menu-arrow x (- y 1))
+			(menu-arrow x (+ y 1))
+			(menu-arrow (- x 1) (- y 1))
+			(menu-arrow (- x 1) (+ y 1))
+			(menu-arrow (+ x 1) (- y 1))
+			(menu-arrow (+ x 1) (+ y 1))
 			(g.set-color :red)
-			(love.graphics.polygon :fill x y (+ x size) (+ y (/ size 2)) x (+ y size)))
+			(menu-arrow x y))
 		(set y (+ y offset)))
 	)
 
