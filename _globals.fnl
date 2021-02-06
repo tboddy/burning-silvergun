@@ -199,6 +199,8 @@
 
 	:tick-rate (/ 1 60)
 
+	:hard-mode false
+
 
 	; -----------------------------------
 	; chrome label
@@ -294,6 +296,7 @@
 
 	:current-score 0
 	:high-score 0
+	:current-doggy 1
 
 	:process-score (fn [input]
 		(var score (tostring input))

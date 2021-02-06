@@ -15,7 +15,12 @@
 
 (fn kill-block [block]
 	(when block.destructable
-			(when (or (= block.type :x) (= block.type :X)) (set block.type :O))
+			(when (= block.type :d)
+				(local doggy-score (* g.current-doggy 900))
+				(set g.current-score (+ g.current-score doggy-score))
+				(set g.current-doggy (+ g.current-doggy 1))
+				(class-indicator.spawn (+ block.x (/ size 2)) (+ block.y (/ size 2)) (.. "BONUS " doggy-score)))
+			(when (or (= block.type :x) (= block.type :d) (= block.type :X)) (set block.type :O))
 			(when block.collider
 				(class-explosion.spawn (+ block.x (/ size 2)) (+ block.y (/ size 2)) 3)
 				(set g.current-score (+ g.current-score 10))
@@ -55,8 +60,8 @@
 		(set block.x (+ g.width (* g.grid 2)))
 		(set block.x (- block.x (* column 2)))
 		(set block.type type)
-		(set block.health 1)
-		(set block.destructable (if (or (= type :x) (= type :X)) true false))
+		(set block.health (if (= type :d) 10 1))
+		(set block.destructable (if (or (= type :d) (= type :x) (= type :X)) true false))
 		(set block.collider (if block.destructable (hc.rectangle block.x block.y size size) false))
 		(when block.collider  (set block.collider.item-type :block)))
 

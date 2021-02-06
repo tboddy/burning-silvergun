@@ -277,6 +277,18 @@
 ; ------------------------------------
 
 (fn wave-one []
+	(fn spawn-bullets [enemy]
+		(local count (if g.hard-mode 9 1))
+		(var angle (g.get-angle enemy player.entity))
+		(for [i 1 count]
+			(class-bullet.spawn (fn [bullet]
+				(set bullet.x enemy.x)
+				(set bullet.y enemy.y)
+				(set bullet.angle angle)
+				(set bullet.speed 1)
+				(set bullet.type 2)))
+			(set angle (+ angle (/ g.tau count)))))
+
 	(fn spawn-enemy [x y alt shooter]
 		(class-enemy.spawn (fn [enemy]
 			(set enemy.health 2)
@@ -289,12 +301,7 @@
 			(set enemy.speed 1))
 			(fn [enemy]
 				(when (and enemy.flags.shooter (= enemy.clock 60))
-					(class-bullet.spawn (fn [bullet]
-						(set bullet.x enemy.x)
-						(set bullet.y enemy.y)
-						(set bullet.angle (g.get-angle enemy player.entity))
-						(set bullet.speed 1.25)
-						(set bullet.type 2))))
+					(spawn-bullets enemy))
 				(when (and (>= enemy.clock 60) (< enemy.clock 80))
 					(var mod 0.005)
 					(set enemy.angle (- enemy.angle (if enemy.flags.alt (* -1 mod) mod)))))))
@@ -304,6 +311,18 @@
 		(spawn-enemy (+ i 4) (/ g.height 4) nil (= i 3))))
 
 (fn wave-two []
+	(fn spawn-bullets [enemy alt]
+		(local count (if g.hard-mode 18 9))
+		(var angle (g.get-angle enemy player.entity))
+		(when alt (set angle (+ angle (/ math.pi count))))
+		(for [i 1 count]
+			(class-bullet.spawn (fn [bullet]
+				(set bullet.x enemy.x)
+				(set bullet.y enemy.y)
+				(set bullet.angle angle)
+				(set bullet.speed (if alt 1.25 1))
+				(set bullet.type (if alt 4 2))))
+			(set angle (+ angle (/ g.tau count)))))
 	(fn spawn-enemy [x y alt shooter opposite]
 		(class-enemy.spawn (fn [enemy]
 			(set enemy.health 2)
@@ -317,16 +336,8 @@
 			(set enemy.speed 1))
 			(fn [enemy]
 				(when (and enemy.flags.shooter (= enemy.clock 75))
-					(local count 9)
-					(var angle (g.get-angle enemy player.entity))
-					(for [i 1 count]
-						(class-bullet.spawn (fn [bullet]
-							(set bullet.x enemy.x)
-							(set bullet.y enemy.y)
-							(set bullet.angle angle)
-							(set bullet.speed 1)
-							(set bullet.type 2)))
-						(set angle (+ angle (/ g.tau count)))))
+					(spawn-bullets enemy)
+					(when g.hard-mode (spawn-bullets enemy true)))
 				(when (and (>= enemy.clock 60) (< enemy.clock 200))
 					(var mod -0.0025)
 					(set enemy.angle (- enemy.angle (if enemy.flags.alt (* -1 mod) mod)))))))

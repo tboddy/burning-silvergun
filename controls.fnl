@@ -34,9 +34,9 @@
 				:right [:key:right :axis:leftx+ :button:dpright]
 				:up [:key:up :axis:lefty- :button:dpup]
 				:down [:key:down :axis:lefty+ :button:dpdown]
-				:shot-1 [:key:z :button:b]
+				:shot-1 [:key:z :button:x]
 				:shot-2 [:key:x :button:a]
-				:shot-3 [:key:c :button:x]
+				:shot-3 [:key:c :button:b]
 				:reload [:key:r :button:start]
 			}})
 		(local joysticks (love.joystick.getJoysticks))

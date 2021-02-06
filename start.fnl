@@ -68,7 +68,7 @@
 ; main menu
 ; ------------------------------------
 
-(local menu-items ["START EASY" "START HARD" "INFO" "EXIT"])
+(local menu-items ["START EASY" "START HARD" "CONTROLS" "EXIT"])
 (var active-menu 1)
 (var can-move false)
 (var moving false)
@@ -86,7 +86,8 @@
 	(g.clear-color))
 
 (fn choose-menu-item []
-	(when (= active-menu 1)
+	(when (or (= active-menu 1) (= active-menu 2))
+		(set g.hard-mode (if (= active-menu 2) true false))
 		(g.init-game)
 		(set g.started true))
 	(when (= active-menu 3) (set scene 4)))
@@ -101,10 +102,10 @@
 	(when (and (not (controls.up)) (not (controls.down))) (set moving false))
 	(when (< active-menu 1) (set active-menu (length menu-items)))
 	(when (> active-menu (length menu-items)) (set active-menu 1))
-	(when (and (controls.shot-1) (not choosing))
+	(when (and (or (controls.shot-1) (controls.shot-2) (controls.shot-3)) (not choosing))
 		(set choosing true)
 		(choose-menu-item))
-	(when (not (controls.shot-1)) (set choosing false)))
+	(when (and (not (controls.shot-1)) (not (controls.shot-2)) (not (controls.shot-3))) (set choosing false)))
 
 (fn update-menu []
 	(trigger-overlay fade-interval 3)
@@ -141,7 +142,7 @@
 
 
 ; ------------------------------------
-; info screen
+; controls screen
 ; ------------------------------------
 
 (local controls-limit-1 (- g.width (* g.grid 5.5)))
@@ -158,9 +159,9 @@
 	{:label "RESTART: R" :limit controls-limit-3 :margin 14}
 	{:label "GAMEPAD" :margin 16 :big true}
 	{:label "MOVE: DPAD/LSTICK"}
-	{:label "SHOT 1: A" :limit controls-limit-3}
-	{:label "SHOT 2: B" :limit controls-limit-3}
-	{:label "SHOT 3: C" :limit controls-limit-3}
+	{:label "SHOT 1: X" :limit controls-limit-3}
+	{:label "SHOT 2: A" :limit controls-limit-3}
+	{:label "SHOT 3: B" :limit controls-limit-3}
 	{:label "PAUSE: START" :limit controls-limit-4 :margin 16}
 	{:label "SHOOT TO RETURN"}])
 
@@ -170,6 +171,12 @@
 		(local row (. controls-labels i))
 		(g.label row.label nil y nil :center (if row.limit row.limit nil) (if row.big true nil) true)
 		(set y (+ y (if row.margin row.margin 0) s-offset))))
+
+(fn update-controls []
+	(when (and (or (controls.shot-1) (controls.shot-2) (controls.shot-3)) (not choosing))
+		(set choosing true)
+		(set scene 3))
+	(when (and (not (controls.shot-1)) (not (controls.shot-2)) (not (controls.shot-3))) (set choosing false)))
 
 
 ; ------------------------------------
@@ -195,6 +202,7 @@
 		(when (= scene 1) (update-splash 2))
 		(when (= scene 2) (update-splash 3))
 		(when (= scene 3) (update-menu))
+		(when (= scene 4) (update-controls))
 		(set clock (+ clock 1)))
 
 	:draw (fn []
