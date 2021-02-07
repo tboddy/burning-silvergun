@@ -30,7 +30,7 @@
 	:collider (hc.circle start-x init-y 1)
 	:combo 0
 	:last-type false
-	:lives 2
+	:lives 9999
 	:hit false})
 
 ; ------------------------------------
@@ -95,7 +95,7 @@
 		(set bullet.speed 24))
 	(when (= shot-type 2)
 		(set bullet.homing true)
-		(set bullet.damage 0.2)
+		(set bullet.damage 0.25)
 		(set bullet.speed 10))
 	(when (= shot-type 3)
 		(set bullet.homing false)
@@ -129,7 +129,7 @@
 		(set shot-clock 0))
 	(var interval nil)
 	(when (= shot-type 1) (set interval 10))
-	(when (= shot-type 2) (set interval 10))
+	(when (= shot-type 2) (set interval 15))
 	(when (= shot-type 3) (set interval 35))
 	(local limit (* interval 1))
 	(local max (* interval 1))

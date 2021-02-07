@@ -112,14 +112,14 @@
 			(fn spawn-bullets [alt]
 				(local bullet-y (if alt boss-offset-top boss-offset-bottom))
 				(class-explosion.spawn enemy.x bullet-y 2 nil true)
-				(local count 20)
+				(local count 10)
 				(var angle (if alt enemy.flags.bullet-angle-1 enemy.flags.bullet-angle-2))
 				(for [i 1 count]
 					(class-bullet.spawn (fn [bullet]
 						(set bullet.x enemy.x)
 						(set bullet.y bullet-y)
-						(set bullet.type 4)
-						(set bullet.speed 1.25)
+						(set bullet.type 5)
+						(set bullet.speed 0.75)
 						(set bullet.angle angle)))
 					(set angle (+ angle (/ g.tau count))))
 					(if alt
@@ -132,35 +132,39 @@
 		(fn homing []
 			(fn spawn-bullets [alt]
 				(var angle (if alt enemy.flags.bullet-angle-3 enemy.flags.bullet-angle-4))
-				(local mod (/ math.pi 30))
-				(local count 3)
-				(set angle (- angle (* 2 mod)))
+				(local count 7)
 				(local bullet-y (if alt boss-offset-top boss-offset-bottom))
 				(class-explosion.spawn enemy.x bullet-y 1 nil true)
+				(set angle (- angle (/ math.pi 2)))
 				(for [i 1 count]
-					(class-bullet.spawn (fn [bullet]
-						(set bullet.x enemy.x)
-						(set bullet.y bullet-y)
-						(set bullet.speed 1.75)
-						(when (= i 2) (set bullet.speed (+ bullet.speed 0.1)))
-						(set bullet.type 8)
-						(set bullet.top true)
-						(set bullet.angle angle)))
-					(set angle (+ angle (* mod 2)))))
-			(local interval 12)
+						(class-bullet.spawn (fn [bullet]
+							(set bullet.x enemy.x)
+							(set bullet.y bullet-y)
+							(set bullet.speed 1)
+							(set bullet.type 8)
+							(set bullet.top true)
+							(set bullet.angle angle)))
+						(set angle (+ angle (/ g.tau count)))))
+			(local interval 25)
 			(local limit (* interval 8))
 			(local max (* limit 2))
 			(local offset (* interval 3))
+			(local mod (/ g.phi 13))
 			(when (and (= (% enemy.flags.bullet-clock interval) 0) (< (% enemy.flags.bullet-clock max) (- limit offset)))
 				(when (= (% enemy.flags.bullet-clock max) 0)
 					(set enemy.flags.bullet-angle-3 (g.get-angle {:x enemy.x :y boss-offset-top} player.entity)))
-				(spawn-bullets true))
+				(spawn-bullets true)
+				(set enemy.flags.bullet-angle-3 (- enemy.flags.bullet-angle-3 mod)))
 			(when (and (= (% enemy.flags.bullet-clock interval) 0) (and (>= (% enemy.flags.bullet-clock max) limit) (< (% enemy.flags.bullet-clock max) (- max offset))))
 				(when (= (% enemy.flags.bullet-clock max) limit)
 					(set enemy.flags.bullet-angle-4 (g.get-angle {:x enemy.x :y boss-offset-bottom} player.entity)))
-				(spawn-bullets)))
+				(spawn-bullets)
+				(set enemy.flags.bullet-angle-4 (+ enemy.flags.bullet-angle-4 mod))))
 		(circle)
-		(homing))
+		(homing)
+
+
+		)
 
 	(class-enemy.spawn (fn [enemy]
 		(set enemy.x (- g.width (* g.grid 1.5)))
@@ -174,7 +178,7 @@
 		(set enemy.flags.bullet-angle-2 math.pi)
 		(set enemy.flags.bullet-mod (/ g.phi 15)))
 		(fn [enemy]
-			(pattern-four enemy)
+			(pattern-two enemy)
 			(set enemy.flags.bullet-clock (+ enemy.flags.bullet-clock 1)))))
 
 
@@ -453,7 +457,6 @@
 			(set enemy.angle math.pi))
 			(fn [enemy]
 				(when enemy.visible
-
 					(if (> enemy.speed 0)
 						(set enemy.speed (- enemy.speed 0.01))
 						(set enemy.speed 0)))
@@ -539,27 +542,212 @@
 		(spawn-enemy (+ i 6) (* (/ g.height 3) 2) true)))
 
 (fn wave-seven []
-	(fn spawn-enemy [y]
+
+	(fn spawn-bullets [enemy alt]
+		(var angle enemy.flags.bullet-angle)
+		(local count 5)
+		(for [i 1 count]
+			(class-bullet.spawn (fn [bullet]
+				(set bullet.x enemy.flags.bullet-pos.x)
+				(set bullet.y enemy.flags.bullet-pos.y)
+				(set bullet.angle angle)
+				(set bullet.speed 1)
+				(set bullet.type 3)))
+			(set angle (+ angle (/ g.tau count))))
+		(local mod (/ g.phi 5))
+		(set enemy.flags.bullet-angle (+ enemy.flags.bullet-angle (if alt (* -1 mod) mod))))
+
+	(fn spawn-enemy [x-offset y]
 		(class-enemy.spawn (fn [enemy]
-			(set enemy.health 5)
-			(set enemy.x (+ g.width (* g.grid 2)))
+			(set enemy.health 6)
+			(set enemy.x (+ (* x-offset (* g.grid 3)) (+ g.width (* g.grid 2))))
 			(set enemy.y y)
 			(set enemy.type :robo-blue)
 			(set enemy.angle math.pi)
-			(set enemy.speed 1)
+			(set enemy.speed 0.65)
 			(set enemy.flags.angle-mod 0.0125))
 			(fn [enemy]
-				(when (>= enemy.clock 100)
-					(set enemy.speed (- enemy.speed 0.005))
-					(when (<= enemy.speed 0.67) (set enemy.speed 0.67))
+				(local interval 20)
+				(local limit (* 60 1))
+				(local max (* limit 2))
+				(when (= (% enemy.clock limit) 0)
+					(set enemy.flags.bullet-pos {:x enemy.x :y enemy.y})
+					(set enemy.flags.bullet-angle (g.get-angle enemy player.entity)))
+				(when (and (>= enemy.clock max) (< enemy.clock (* 60 7)) (>= (% enemy.clock max) limit) (= (% enemy.clock interval) 0))
+					(spawn-bullets enemy (>= enemy.clock (* max 2))))
+				(when (>= enemy.clock 160)
 					(set enemy.angle (- enemy.angle enemy.flags.angle-mod))
 					(when (<= enemy.angle 0)
 						(set enemy.angle 0))))))
-	(spawn-enemy (/ g.height 4)))
 
-(fn wave-eight [])
+	(for [i 1 3]
+		(spawn-enemy i (/ g.height 4))))
 
-(fn boss-two [])
+(fn wave-eight []
+
+	(fn center []
+		(fn spawn-bullets [enemy]
+			(local offset 32)
+			(local x (- enemy.x 4))
+			(var y (- enemy.y (/ offset 2)))
+			(local mod (/ g.phi 30))
+			(var angle (+ math.pi mod))
+			(for [i 1 2]
+				(class-explosion.spawn x y 2 false true)
+				(class-bullet.spawn (fn [bullet]
+					(set bullet.x x)
+					(set bullet.y y)
+					(set bullet.angle angle)
+					(set bullet.speed 1.5)
+					(set bullet.type 3)))
+				(set angle (- angle (* mod 2)))
+				(set y (+ y offset))))
+		(class-enemy.spawn (fn [enemy]
+			(set enemy.health 10)
+			(set enemy.x (+ (+ g.width (* g.grid 2))))
+			(set enemy.y (/ g.height 2))
+			(set enemy.type :robo-blue)
+			(set enemy.angle math.pi)
+			(set enemy.speed 0.5))
+			(fn [enemy]
+				(local interval 30)
+				(local max (* 60 3))
+				(local start 60)
+				(when (and (< enemy.clock (* 60 7)) (= (% enemy.clock interval) 0) (>= (% enemy.clock max) start))
+					(spawn-bullets enemy)))))
+
+	(fn sides []
+
+		(fn spawn-bullet [enemy]
+			(class-bullet.spawn (fn [bullet]
+				(set bullet.x enemy.flags.bullet-pos.x)
+				(set bullet.y enemy.flags.bullet-pos.y)
+				(set bullet.angle enemy.flags.bullet-angle)
+				(set bullet.speed 1.5)
+				(set bullet.type 9))))
+
+		(fn spawn-enemy [alt]
+			(class-enemy.spawn (fn [enemy]
+				(set enemy.health 5)
+				(set enemy.x (+ g.width (* 2 g.grid)))
+				(set enemy.y (* -2 g.grid))
+				(set enemy.type :robo-yellow)
+				(set enemy.angle (* math.pi 0.75))
+				(set enemy.flags.angle-mod 0.01)
+				(when alt
+					(set enemy.flags.alt true)
+					(set enemy.y (- g.height enemy.y))
+					(set enemy.angle (* math.pi 1.25))
+					(set enemy.flags.angle-mod (* -1 enemy.flags.angle-mod)))
+				(set enemy.speed 0.5))
+				(fn [enemy]
+					(when (>= enemy.clock 160)
+						(set enemy.angle (+ enemy.angle enemy.flags.angle-mod))
+						(when (and (not enemy.flags.alt) (>= enemy.angle math.pi)) (set enemy.angle math.pi))
+						(when (and enemy.flags.alt (< enemy.angle math.pi)) (set enemy.angle math.pi)))
+					(local interval 10)
+					(local limit 30)
+					(local max (* limit 2))
+					(when (and (>= enemy.clock 120) (< enemy.clock (* 60 6)) (>= (% enemy.clock max) limit) (= (% enemy.clock interval) 0))
+						(when (= (% enemy.clock max) limit)
+							(set enemy.flags.bullet-pos {:x enemy.x :y enemy.y})
+							(set enemy.flags.bullet-angle (g.get-angle enemy player.entity)))
+						(spawn-bullet enemy)))))
+
+		(spawn-enemy)
+		(spawn-enemy true))
+
+	(center)
+	(sides))
+
+(fn boss-two []
+
+	(fn circle [enemy alt]
+			(local mod (* g.phi 5))
+			(fn spawn-bullets []
+				(local bullet-y enemy.y)
+				(class-explosion.spawn enemy.x bullet-y 2 nil true)
+				(local count 10)
+				(var angle (if alt enemy.flags.bullet-angle-1 enemy.flags.bullet-angle-2))
+				(for [i 1 count]
+					(class-bullet.spawn (fn [bullet]
+						(set bullet.x enemy.x)
+						(set bullet.y bullet-y)
+						(set bullet.type 5)
+						(set bullet.speed 0.75)
+						(set bullet.angle angle)))
+					(set angle (+ angle (/ g.tau count))))
+					(if alt
+						(set enemy.flags.bullet-angle-1 (+ enemy.flags.bullet-angle-1 mod))
+						(set enemy.flags.bullet-angle-2 (- enemy.flags.bullet-angle-2 mod))))
+			(local interval 40)
+			(when (and alt (= (% enemy.flags.bullet-clock interval) 0)) (spawn-bullets))
+			(when (and (not alt) (= (% enemy.flags.bullet-clock interval) (/ interval 2))) (spawn-bullets true)))
+
+	(fn homing [enemy alt]
+			(fn spawn-bullets []
+				(var angle (if alt enemy.flags.bullet-angle-3 enemy.flags.bullet-angle-4))
+				(local count 5)
+				(local bullet-y enemy.y)
+				(class-explosion.spawn enemy.x bullet-y 1 nil true)
+				(set angle (- angle (/ math.pi 2)))
+				(for [i 1 count]
+						(class-bullet.spawn (fn [bullet]
+							(set bullet.x enemy.x)
+							(set bullet.y bullet-y)
+							(set bullet.speed 1)
+							(set bullet.type 8)
+							(set bullet.top true)
+							(set bullet.angle angle)))
+						(set angle (+ angle (/ g.tau count)))))
+			(local interval 25)
+			(local limit (* interval 8))
+			(local max (* limit 2))
+			(local offset (* interval 3))
+			(local mod (/ g.phi 13))
+
+			(when alt
+				(when (and (= (% enemy.flags.bullet-clock interval) 0) (< (% enemy.flags.bullet-clock max) (- limit offset)))
+					(when (= (% enemy.flags.bullet-clock max) 0)
+						(set enemy.flags.bullet-angle-3 (g.get-angle {:x enemy.x :y enemy.y} player.entity)))
+					(spawn-bullets true)
+					(set enemy.flags.bullet-angle-3 (- enemy.flags.bullet-angle-3 mod))))
+			
+			(when (not alt)
+				(when (and (= (% enemy.flags.bullet-clock interval) 0) (and (>= (% enemy.flags.bullet-clock max) limit) (< (% enemy.flags.bullet-clock max) (- max offset))))
+					(when (= (% enemy.flags.bullet-clock max) limit)
+						(set enemy.flags.bullet-angle-4 (g.get-angle {:x enemy.x :y enemy.y} player.entity)))
+					(spawn-bullets)
+					(set enemy.flags.bullet-angle-4 (+ enemy.flags.bullet-angle-4 mod)))))
+	
+	(fn spawn-enemy [y type]
+		(class-enemy.spawn (fn [enemy]
+			(set enemy.x (+ g.width (* g.grid 1.5)))
+			(set enemy.y y)
+			(set enemy.health 30)
+			(set enemy.flags.bullet-clock 0)
+			(set enemy.type :robo-red)
+			(set enemy.speed 1.15)
+			(set enemy.flags.type type)
+			(set enemy.flags.bullet-clock 0)
+			(set enemy.flags.bullet-angle-1 0)
+			(set enemy.flags.bullet-angle-2 0)
+			(set enemy.flags.bullet-angle-3 0)
+			(set enemy.flags.bullet-angle-4 0)
+			(set enemy.angle math.pi))
+			(fn [enemy]
+				(when enemy.visible
+					(if (> enemy.speed 0)
+						(set enemy.speed (- enemy.speed 0.01))
+						(set enemy.speed 0)))
+				(when (>= enemy.clock 100)
+					(circle enemy (= enemy.flags.type 2))
+					(homing enemy (= enemy.flags.type 2))
+					(set enemy.flags.bullet-clock (+ enemy.flags.bullet-clock 1))))))
+		(spawn-enemy (/ g.height 4) 1)
+		(spawn-enemy (* (/ g.height 4) 3) 2)
+
+		)
 
 
 (fn wave-nine [])
@@ -570,14 +758,31 @@
 
 (fn wave-twelve [])
 
-(fn boss-three [])
+(fn boss-three []
+
+	(class-enemy.spawn (fn [enemy]
+		(set enemy.x (+ g.width (* g.grid 2)))
+		(set enemy.y (/ g.height 2))
+		(set enemy.health 150)
+		(set enemy.type :robot-big-1)
+		(set enemy.speed 1.15)
+		(set enemy.angle math.pi))
+		(fn [enemy]
+			(when enemy.visible
+					(if (> enemy.speed 0)
+						(set enemy.speed (- enemy.speed 0.01))
+						(set enemy.speed 0)))
+			))
+		
+
+	)
 
 
 ; ------------------------------------
 ; enemy order
 ; ------------------------------------
 
-(var current-enemy-section 1)
+(var current-enemy-section 2)
 (local enemy-sections [
 
 	(fn []
@@ -596,7 +801,7 @@
 
 	(fn []
 		(var base 0)
-		(when (= clock base) (wave-seven)))
+		(when (= clock base) (boss-three)))
 		; (set base (* 60 1.5))
 		; (when (= clock base) (wave-six)))
 	])

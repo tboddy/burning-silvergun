@@ -102,7 +102,7 @@
 	:save-table nil
 
 	:fullscreen false
-	:started false
+	:started true
 	:paused false
 	:game-over false
 	:time-over false
