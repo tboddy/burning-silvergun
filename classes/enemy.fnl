@@ -14,6 +14,7 @@
 ; ------------------------------------
 
 (fn kill-enemy [enemy]
+	(when enemy.suicide (enemy.suicide))
 	(set enemy.active false)
 	(class-explosion.spawn enemy.x enemy.y 3)
  (sound.play-sfx :explosion1)
@@ -39,6 +40,19 @@
 	(when enemy.collider
 		(hc.remove enemy.collider)
 		(set enemy.collider false)))
+
+
+; ------------------------------------
+; collision w player
+; ------------------------------------
+
+(fn check-collision [enemy]
+	(local distance (g.get-distance enemy player.entity))
+	(when (< distance 20)
+		(each [item position (pairs (hc.collisions enemy.collider))]
+			(when (and item.item-type (= item.item-type :player) (= player.invincible-clock 0))
+				(player.hit 3)
+				(class-explosion.spawn enemy.x enemy.y 3)))))
 
 
 ; ------------------------------------
@@ -71,7 +85,7 @@
 		(set enemy.visible false)
 		(set enemy.clock 0)
 		(set enemy.flags {})
-		; (set enemy.quad (love.graphics.newQuad 0 0 enemy.size enemy.size images.suika))
+		(set enemy.suicide nil)
 		(init-func enemy)
 		(set enemy.size 96)
 		(set enemy.update-func update-func)
@@ -98,7 +112,7 @@
 		(when enemy.visible
 			(when enemy.collider
 				(when (>= enemy.clock fade-max) (set enemy.collider.item-killable true))
-				(enemy.collider:moveTo enemy.x enemy.y)
+				(when (and (not g.game-over) enemy.collider) (enemy.collider:moveTo enemy.x enemy.y))
 				(when enemy.collider.item-hit
 					(set enemy.collider.item-hit false)
 					(set enemy.health (- enemy.health enemy.collider.hit-damage))
@@ -110,7 +124,8 @@
 			(set enemy.active false)
 			(when enemy.collider
 				(hc.remove enemy.collider)
-				(set enemy.collider false))))
+				(set enemy.collider false)))
+		(when (and (not g.game-over) enemy.collider) (check-collision enemy)))
 
 	:draw (fn [enemy]
 		(when (< enemy.clock (* fade-interval 2)) (g.mask :quarter (fn [] (g.img (. images enemy.type) enemy.x enemy.y))))

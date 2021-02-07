@@ -103,69 +103,6 @@
 		(puke)
 		(stars))
 
-
-	; circles and homing
-	(fn pattern-four [enemy]
-
-		(fn circle []
-			(local mod (* g.phi 5))
-			(fn spawn-bullets [alt]
-				(local bullet-y (if alt boss-offset-top boss-offset-bottom))
-				(class-explosion.spawn enemy.x bullet-y 2 nil true)
-				(local count 10)
-				(var angle (if alt enemy.flags.bullet-angle-1 enemy.flags.bullet-angle-2))
-				(for [i 1 count]
-					(class-bullet.spawn (fn [bullet]
-						(set bullet.x enemy.x)
-						(set bullet.y bullet-y)
-						(set bullet.type 5)
-						(set bullet.speed 0.75)
-						(set bullet.angle angle)))
-					(set angle (+ angle (/ g.tau count))))
-					(if alt
-						(set enemy.flags.bullet-angle-1 (+ enemy.flags.bullet-angle-1 mod))
-						(set enemy.flags.bullet-angle-2 (- enemy.flags.bullet-angle-2 mod))))
-			(local interval 40)
-			(when (= (% enemy.flags.bullet-clock interval) 0) (spawn-bullets))
-			(when (= (% enemy.flags.bullet-clock interval) (/ interval 2)) (spawn-bullets true)))
-
-		(fn homing []
-			(fn spawn-bullets [alt]
-				(var angle (if alt enemy.flags.bullet-angle-3 enemy.flags.bullet-angle-4))
-				(local count 7)
-				(local bullet-y (if alt boss-offset-top boss-offset-bottom))
-				(class-explosion.spawn enemy.x bullet-y 1 nil true)
-				(set angle (- angle (/ math.pi 2)))
-				(for [i 1 count]
-						(class-bullet.spawn (fn [bullet]
-							(set bullet.x enemy.x)
-							(set bullet.y bullet-y)
-							(set bullet.speed 1)
-							(set bullet.type 8)
-							(set bullet.top true)
-							(set bullet.angle angle)))
-						(set angle (+ angle (/ g.tau count)))))
-			(local interval 25)
-			(local limit (* interval 8))
-			(local max (* limit 2))
-			(local offset (* interval 3))
-			(local mod (/ g.phi 13))
-			(when (and (= (% enemy.flags.bullet-clock interval) 0) (< (% enemy.flags.bullet-clock max) (- limit offset)))
-				(when (= (% enemy.flags.bullet-clock max) 0)
-					(set enemy.flags.bullet-angle-3 (g.get-angle {:x enemy.x :y boss-offset-top} player.entity)))
-				(spawn-bullets true)
-				(set enemy.flags.bullet-angle-3 (- enemy.flags.bullet-angle-3 mod)))
-			(when (and (= (% enemy.flags.bullet-clock interval) 0) (and (>= (% enemy.flags.bullet-clock max) limit) (< (% enemy.flags.bullet-clock max) (- max offset))))
-				(when (= (% enemy.flags.bullet-clock max) limit)
-					(set enemy.flags.bullet-angle-4 (g.get-angle {:x enemy.x :y boss-offset-bottom} player.entity)))
-				(spawn-bullets)
-				(set enemy.flags.bullet-angle-4 (+ enemy.flags.bullet-angle-4 mod))))
-		(circle)
-		(homing)
-
-
-		)
-
 	(class-enemy.spawn (fn [enemy]
 		(set enemy.x (- g.width (* g.grid 1.5)))
 		(set enemy.y (/ g.height 2))
@@ -745,9 +682,7 @@
 					(homing enemy (= enemy.flags.type 2))
 					(set enemy.flags.bullet-clock (+ enemy.flags.bullet-clock 1))))))
 		(spawn-enemy (/ g.height 4) 1)
-		(spawn-enemy (* (/ g.height 4) 3) 2)
-
-		)
+		(spawn-enemy (* (/ g.height 4) 3) 2))
 
 
 (fn wave-nine [])
@@ -760,29 +695,91 @@
 
 (fn boss-three []
 
+	(fn spawn-bullets-1 [enemy]
+
+		(fn puke []
+			(fn spawn-bullets []
+				(local count 15)
+				(var angle enemy.bullet-angle-1)
+				(for [i 1 count]
+					(class-bullet.spawn (fn [bullet]
+						(set bullet.x enemy.x)
+						(set bullet.y enemy.y)
+						(set bullet.speed 0.75)
+						(set bullet.type 10)
+						(set bullet.top true)
+						(set bullet.angle angle)))
+					(set angle (+ angle (/ g.tau count))))
+					(set enemy.bullet-angle-1 (+ enemy.bullet-angle-1 (/ g.phi 15))))
+			(when (= enemy.flags.bullet-clock 0) (set enemy.bullet-angle-1 0))
+			(when (= (% enemy.flags.bullet-clock 30) 0)
+				(spawn-bullets)))
+
+		(fn stars []
+			(fn spawn-bullets [alt]
+				(var angle (+ math.pi (* math.pi (math.random))))
+				(local count 15)
+				(local mod 0.25)
+				(var diff (/ count 10))
+				(when alt (set diff (/ diff 2)))
+				(local angle-mod (* (/ g.tau count) (+ diff 1)))
+				(for [i 1 count]
+					(local limit (% i diff))
+					(local max (% i (* diff 2)))
+					(var b-speed (+ (* max mod) 1))
+					(when (>= max diff)
+						(set b-speed (- b-speed (* (- max diff) (* mod 2)))))
+					(class-bullet.spawn (fn [bullet]
+						(set bullet.x enemy.x)
+						(set bullet.y enemy.y)
+						(set bullet.angle (+ angle angle-mod))
+						(set bullet.speed (+ 0.25 (/ b-speed 4)))
+						(set bullet.type 2)))
+					(set angle (+ angle (/ g.tau count)))))
+			(local interval 60)
+			(when (= (% enemy.flags.bullet-clock interval) 0)
+				(spawn-bullets (= (% enemy.flags.bullet-clock (* interval 2)) 0))))
+
+		(puke)
+		(stars)
+		(set enemy.flags.bullet-clock (+ enemy.flags.bullet-clock 1)))
+
+	(fn spawn-bullets-2 [enemy]
+
+		)
+
+
 	(class-enemy.spawn (fn [enemy]
-		(set enemy.x (+ g.width (* g.grid 2)))
+		(set enemy.x (+ g.width (* g.grid 4)))
 		(set enemy.y (/ g.height 2))
-		(set enemy.health 150)
+		(set enemy.flags.init-health 250)
+		(set enemy.health 1)
 		(set enemy.type :robot-big-1)
-		(set enemy.speed 1.15)
+		(set enemy.speed 1.9)
+		(set enemy.flags.bullet-clock 0)
+		(set enemy.suicide (fn []
+			(set g.kill-bullets true)
+			(set g.game-over true)
+			(set g.game-finished true)
+			(when g.no-miss (set g.current-score (+ g.current-score 10000)))
+			))
 		(set enemy.angle math.pi))
 		(fn [enemy]
 			(when enemy.visible
 					(if (> enemy.speed 0)
-						(set enemy.speed (- enemy.speed 0.01))
+						(set enemy.speed (- enemy.speed 0.025))
 						(set enemy.speed 0)))
-			))
-		
-
-	)
+			(when (<= enemy.speed 0)
+				(when (>= enemy.health (* 3 (/ enemy.flags.init-health 4))) (spawn-bullets-1 enemy))
+				(when (and (>= enemy.health (/ enemy.flags.init-health 2)) (< enemy.health (* 3 (/ enemy.flags.init-health 4)))) (spawn-bullets-2 enemy))
+				))))
 
 
 ; ------------------------------------
 ; enemy order
 ; ------------------------------------
 
-(var current-enemy-section 2)
+(var current-enemy-section 1)
 (local enemy-sections [
 
 	(fn []

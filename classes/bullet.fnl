@@ -8,9 +8,6 @@
 (local bullets {})
 (local bullet-animate-interval 8)
 
-(var kill-bullet-clock 0)
-(local kill-bullet-limit 60)
-
 
 ; ------------------------------------
 ; spawn props
@@ -95,25 +92,26 @@
 	; -----------------------------------
 
 	:spawn (fn [init-func update-func]
-		(local bullet (g.get-item bullets))
-		(set bullet.active true)
-		(set bullet.clock 0)
-		(set bullet.grazed false)
-		(set bullet.top false)
-		(set bullet.visible true)
-		(set bullet.flags {})
-		(init-func bullet)
-		(when (= bullet.type 1) (set-type bullet 0 0 16 14))
-		(when (= bullet.type 2) (set-type bullet 0 14 16 16))
-		(when (= bullet.type 3) (set-type bullet 0 30 20 6))
-		(when (= bullet.type 4) (set-type bullet 0 36 12 4))
-		(when (= bullet.type 5) (set-type bullet 0 40 8 8))
-		(when (= bullet.type 6) (set-type bullet 64 0 16 14))
-		(when (= bullet.type 7) (set-type bullet 64 14 16 16))
-		(when (= bullet.type 8) (set-type bullet 80 30 20 6))
-		(when (= bullet.type 9) (set-type bullet 48 36 12 4))
-		(when (= bullet.type 10) (set-type bullet 32 40 8 8))
-		(if update-func (set bullet.update-func update-func) (set bullet.update-func nil)))
+		(when (= 0 g.kill-bullet-clock)
+			(local bullet (g.get-item bullets))
+			(set bullet.active true)
+			(set bullet.clock 0)
+			(set bullet.grazed false)
+			(set bullet.top false)
+			(set bullet.visible true)
+			(set bullet.flags {})
+			(init-func bullet)
+			(when (= bullet.type 1) (set-type bullet 0 0 16 14))
+			(when (= bullet.type 2) (set-type bullet 0 14 16 16))
+			(when (= bullet.type 3) (set-type bullet 0 30 20 6))
+			(when (= bullet.type 4) (set-type bullet 0 36 12 4))
+			(when (= bullet.type 5) (set-type bullet 0 40 8 8))
+			(when (= bullet.type 6) (set-type bullet 64 0 16 14))
+			(when (= bullet.type 7) (set-type bullet 64 14 16 16))
+			(when (= bullet.type 8) (set-type bullet 80 30 20 6))
+			(when (= bullet.type 9) (set-type bullet 48 36 12 4))
+			(when (= bullet.type 10) (set-type bullet 32 40 8 8))
+			(if update-func (set bullet.update-func update-func) (set bullet.update-func nil))))
 
 
 	; -----------------------------------
@@ -130,6 +128,9 @@
 			(set bullet.y (+ bullet.y (* (math.sin bullet.angle) bullet.speed))))
 		(when (not g.game-over) (check-collision bullet))
 		(set bullet.clock (+ bullet.clock 1))
+		(when (> g.kill-bullet-clock 0)
+			(when bullet.visible (class-explosion.spawn bullet.x bullet.y (if (< bullet.type 6) 2 1) nil true))
+			(set bullet.active false))
 		(when (and bullet.visible (or (< bullet.x (* -1 bullet.texture-width)) (> bullet.x (+ g.width bullet.texture-width))
 			(< bullet.y (* -1 bullet.texture-height)) (> bullet.y (+ g.height bullet.texture-height))))
 			(set bullet.active false)

@@ -102,11 +102,16 @@
 	:save-table nil
 
 	:fullscreen false
-	:started true
+	:started false
 	:paused false
 	:game-over false
 	:time-over false
 	:game-finished false
+	:game-over-clock 0
+
+	:kill-bullet-clock 0
+	:kill-bullets false
+	:no-miss true
 
 	:animate-interval 15
 

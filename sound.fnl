@@ -32,7 +32,7 @@
    (file:setVolume sfx-volume)
    (when (= name :playershot) (file:setVolume 0.3))
    (when (or (= name :bullet1) (= name :bullet2) (= name :bullet3)) (file:setVolume 0.45))
-   (file:setVolume 0)
+   ; (file:setVolume 0)
    )
 
   (for [i 1 (length bgm-names)]
@@ -41,7 +41,7 @@
    (local file (. bgm-files name))
    (file:setVolume bgm-volume)
    (when (= name :stage-loop) (file:setLooping true))
-   (file:setVolume 0)
+   ; (file:setVolume 0)
    )
 
   )

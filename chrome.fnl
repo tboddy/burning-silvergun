@@ -38,9 +38,15 @@
 
 (fn draw-big-overlay [label]
 	(var y (- (/ g.height 2) 8))
+	(when g.game-finished (set y (- y g.grid)))
 	(g.set-color :black)
 	(g.mask :half (fn [] (love.graphics.rectangle :fill 0 0 g.width g.height)))
-	(g.label label nil y nil "center" nil true true))
+	(g.label label nil y nil "center" nil true true)
+	(when (and g.game-finished g.no-miss)
+		(set y (+ y 20))
+		(g.label "NO MISS! +10000" nil y nil "center" nil true true))
+
+	)
 
 (fn draw-debug []
 	(when player.entity (g.label (.. "COMBO " player.entity.combo) 6 (- g.height 8 5))))
@@ -97,6 +103,7 @@
 	:draw (fn []
 		(when g.paused (draw-big-overlay "PAUSED"))
 		(when (and g.game-over (not g.game-finished) (not g.time-over)) (draw-big-overlay "GAME OVER"))
+		(when (and g.game-over g.game-finished) (draw-big-overlay "GAME FINISHED"))
 		(when (and g.game-over g.time-over) (draw-big-overlay "TIME OVER"))
 		(when (and (not g.paused) (< g.start-clock start-max)) (draw-start))
 		(when player.entity (draw-lives))

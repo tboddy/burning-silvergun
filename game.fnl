@@ -75,7 +75,9 @@
 		(player.update)
 		(update-pause))
 	(stage.update)
-	(chrome.update))
+	(chrome.update)
+	(when (> g.game-over-clock 60) (when (or (controls.shot-1) (controls.shot-2) (controls.pause)) (g.restart)))
+	(when g.game-over (set g.game-over-clock (+ g.game-over-clock 1))))
 
 (fn draw-game []
 	(background.draw)

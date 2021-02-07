@@ -25,10 +25,15 @@
 		(local enemy (. class-enemy.enemies i))
 		(when (and enemy.active enemy.visible) (class-enemy.draw enemy))))
 
+(local kill-bullet-limit 90)
 (fn update-bullets []
 	(for [i 1 (length class-bullet.bullets)]
 		(local bullet (. class-bullet.bullets i))
-		(when (and bullet.active bullet.x bullet.y) (class-bullet.update bullet))))
+		(when (and bullet.active bullet.x bullet.y) (class-bullet.update bullet)))
+	(when g.kill-bullets
+		(set g.kill-bullet-clock kill-bullet-limit)
+		(set g.kill-bullets false))
+	(if (> g.kill-bullet-clock 0) (set g.kill-bullet-clock (- g.kill-bullet-clock 1))))
 
 (fn draw-bullets []
 	(for [i 1 (length class-bullet.bullets)]
