@@ -69,7 +69,7 @@
 ; main menu
 ; ------------------------------------
 
-(local menu-items ["START EASY" "START HARD" "CONTROLS" "EXIT"])
+(local menu-items ["START EASY" "START HARD" "CONTROLS" "FULLSCREEN" "EXIT"])
 (var active-menu 1)
 (var can-move false)
 (var moving false)
@@ -77,7 +77,7 @@
 
 (fn draw-title []
 	(local x (+ 4 (- (/ g.width 2) (/ (g.img-width images.title) 2)))) ; wtf
-	(local y (* g.grid 2))
+	(local y (* g.grid 1.5))
 	(g.set-color :black)
 	(love.graphics.draw images.title-shadow x y)
 	(g.set-color :yellow)
@@ -96,7 +96,8 @@
 	(when (= active-menu 3)
 		(sound.play-sfx :menuchange)
 		(set scene 4))
-	(when (= active-menu 4) (love.event.quit)))
+	(when (= active-menu 4) (g.toggle-fullscreen))
+	(when (= active-menu 5) (love.event.quit)))
 
 (fn update-menu-controls []
 	(when (and (not moving) (controls.up))
@@ -108,10 +109,10 @@
 	(when (and (not (controls.up)) (not (controls.down))) (set moving false))
 	(when (< active-menu 1) (set active-menu (length menu-items)))
 	(when (> active-menu (length menu-items)) (set active-menu 1))
-	(when (and (or (controls.shot-1) (controls.shot-2) (controls.shot-3)) (not choosing))
+	(when (and (or (controls.shot-1) (controls.shot-2)) (not choosing))
 		(set choosing true)
 		(choose-menu-item))
-	(when (and (not (controls.shot-1)) (not (controls.shot-2)) (not (controls.shot-3))) (set choosing false)))
+	(when (and (not (controls.shot-1)) (not (controls.shot-2))) (set choosing false)))
 
 (var played-bgm false)
 (fn update-menu []
@@ -139,10 +140,17 @@
 		(local size 8)
 		(love.graphics.polygon :fill x y (+ x size) (+ y (/ size 2)) x (+ y size)))
 
+
+
+
 (fn draw-menu []
-	(var y (* g.grid 9.125))
+	(local is-fs (love.window.getFullscreen))
+	(var y (- (* g.grid 8.75) 2))
 	(for [i 1 (length menu-items)]
-		(g.label (. menu-items i) nil y nil :center nil nil true)
+		(var label (. menu-items i))
+		(when (and is-fs (= i 4))
+			(set label "WINDOWED"))
+		(g.label label nil y nil :center nil nil true)
 		(when (and can-move (= i active-menu))
 			(local x (* g.grid 4.25))
 			(g.set-color :black)
@@ -177,35 +185,41 @@
 (local controls-limit-2 (- g.width (* g.grid 4)))
 (local controls-limit-3 (- g.width (* g.grid 6)))
 (local controls-limit-4 (- g.width (* g.grid 3.5)))
+(local controls-limit-5 (- g.width (* g.grid 7.5)))
+(local controls-limit-6 (- g.width (* g.grid 5)))
 (local controls-labels [
 	{:label "KEYBOARD" :margin 16 :big true}
 	{:label "MOVE: ARROW KEYS"}
 	{:label "SHOT 1: Z" :limit controls-limit-1}
 	{:label "SHOT 2: X" :limit controls-limit-1}
-	{:label "SHOT 3: C" :limit controls-limit-1}
 	{:label "PAUSE: ESC" :limit controls-limit-2}
-	{:label "RESTART: R" :limit controls-limit-3 :margin 14}
+	{:label "FULLSCREEN: F" :limit controls-limit-5}
+	{:label "RESTART: R" :limit controls-limit-3 :margin 12}
 	{:label "GAMEPAD" :margin 16 :big true}
 	{:label "MOVE: DPAD/LSTICK"}
-	{:label "SHOT 1: X" :limit controls-limit-3}
-	{:label "SHOT 2: A" :limit controls-limit-3}
-	{:label "SHOT 3: B" :limit controls-limit-3}
-	{:label "PAUSE: START" :limit controls-limit-4 :margin 16}
-	{:label "SHOOT TO RETURN"}])
+	{:label "SHOT 1: A" :limit controls-limit-3}
+	{:label "SHOT 2: B" :limit controls-limit-3}
+	{:label "PAUSE: START" :limit controls-limit-4}
+	{:label "RESTART: BACK" :limit controls-limit-6 :margin 14}
+	{:label "ANY SHOT TO RETURN"}])
 
 (fn draw-controls []
-	(var y 18)
+	(var y 20)
 	(for [i 1 (length controls-labels)]
 		(local row (. controls-labels i))
-		(g.label row.label nil y nil :center (if row.limit row.limit nil) (if row.big true nil) true)
+		(var limit (if row.limit row.limit g.width))
+		(when (and (not= i 1) (not= i 8) (not= i (length controls-labels)))
+			(set limit (+ limit (* g.grid 2)))
+			(when (> i 8) (set limit (+ limit 8))))
+		(g.label row.label nil y nil :center limit (if row.big true nil) true)
 		(set y (+ y (if row.margin row.margin 0) s-offset))))
 
 (fn update-controls []
-	(when (and (or (controls.shot-1) (controls.shot-2) (controls.shot-3)) (not choosing))
+	(when (and (or (controls.shot-1) (controls.shot-2)) (not choosing))
 		(set choosing true)
 		(sound.play-sfx :menuchange)
 		(set scene 3))
-	(when (and (not (controls.shot-1)) (not (controls.shot-2)) (not (controls.shot-3))) (set choosing false)))
+	(when (and (not (controls.shot-1)) (not (controls.shot-2))) (set choosing false)))
 
 
 ; ------------------------------------

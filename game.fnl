@@ -34,7 +34,7 @@
 		(set g.save-table (bitser.loads score-data))
 		(when g.save-table.high-score-easy (set g.high-score-easy g.save-table.high-score-easy))
 		(when g.save-table.high-score-hard (set g.high-score-hard g.save-table.high-score-hard))
-		(when (and g.save-table.fullscreen (or (= g.save-table.fullscreen true) (= g.save-table.fullscreen :true))) (g.do-fullscreen))
+		(when (and g.save-table.fullscreen (or (= g.save-table.fullscreen true) (= g.save-table.fullscreen :true))) (love.window.setFullscreen true))
 		)
 	(when (not score-data) (set g.save-table {}))
 	)
@@ -57,14 +57,17 @@
 ; ------------------------------------
 
 (var pausing false)
-
 (fn update-pause []
 	(when (and (controls.pause) (not pausing))
 		(set pausing true)
 		(set g.paused (if g.paused false true))
-		(if g.paused (sound.stop-bgm) (sound.play-bgm :stage-loop))
-		)
+		(if g.paused (sound.stop-bgm) (sound.play-bgm :stage-loop)))
 	(when (not (controls.pause)) (set pausing false)))
+
+(var doing-fullscreen false)
+(fn update-fullscreen []
+	(when (and (controls.fullscreen) (not doing-fullscreen)) (g.toggle-fullscreen))
+	(when (not (controls.fullscreen)) (set doing-fullscreen false)))
 
 (fn update-game []
 	(background.update)
@@ -90,6 +93,7 @@
 	(controls.update)
 	(sound.update)
 	(when (controls.reload) (g.restart))
+	(update-fullscreen)
 	(if g.started (update-game dt) (start.update)))
 
 (fn love.draw []

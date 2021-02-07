@@ -34,11 +34,11 @@
 				:right [:key:right :axis:leftx+ :button:dpright]
 				:up [:key:up :axis:lefty- :button:dpup]
 				:down [:key:down :axis:lefty+ :button:dpdown]
-				:shot-1 [:key:z :button:x]
-				:shot-2 [:key:x :button:a]
-				:shot-3 [:key:c :button:b]
+				:shot-1 [:key:z :button:a]
+				:shot-2 [:key:x :button:b]
 				:pause [:key:escape :button:start]
-				:reload [:key:r]
+				:reload [:key:r :button:back]
+				:fullscreen [:key:f]
 			}})
 		(local joysticks (love.joystick.getJoysticks))
 		(for [i 1 (length joysticks)] (if (= i 1) (set baton-obj.joystick (. joysticks i))))
@@ -53,14 +53,16 @@
 		(input:update))
 
 
-	; LMAO DONT LOOK AT THIS
 
 	; -----------------------------------
 	; state
 	; -----------------------------------
 
+	; LMAO DONT EVER DO THIS
+
 	:reload (fn [] (. (= (input:get :reload) 1)))
 	:pause (fn [] (. (= (input:get :pause) 1)))
+	:fullscreen (fn [] (. (= (input:get :fullscreen) 1)))
 
 
 	; -----------------------------------
@@ -79,7 +81,6 @@
 
 	:shot-1 (fn [] (. (= (input:get :shot-1) 1)))
 	:shot-2 (fn [] (. (= (input:get :shot-2) 1)))
-	:shot-3 (fn [] (. (= (input:get :shot-3) 1)))
 
 
 	})

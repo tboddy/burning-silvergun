@@ -241,10 +241,13 @@
 	; fullscreen
 	; -----------------------------------
 
-	:do-fullscreen (fn []
-		(print "go fullscreen")
-		)
-
+	:toggle-fullscreen (fn []
+		(local is-fs (love.window.getFullscreen))
+		(when is-fs
+			(love.window.setFullscreen false)
+			(maid64.resize (love.graphics.getWidth) (love.graphics.getHeight)))
+		(when (not is-fs)
+			(love.window.setFullscreen true)))
 
 
 	})
