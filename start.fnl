@@ -100,11 +100,9 @@
 
 (fn update-menu-controls []
 	(when (and (not moving) (controls.up))
-		(sound.play-sfx :menuchange)
 		(set active-menu (- active-menu 1))
 		(set moving true))
 	(when (and (not moving) (controls.down))
-		(sound.play-sfx :menuchange)
 		(set active-menu (+ active-menu 1))
 		(set moving true))
 	(when (and (not (controls.up)) (not (controls.down))) (set moving false))

@@ -73,17 +73,18 @@
 	; -----------------------------------
 
 	:update (fn []
-		(when (and (not g.game-over) (not g.time-over)) (set time-left (- time-left (/ 1 60))))
+		(when (and (not g.paused) (not g.game-over) (not g.time-over)) (set time-left (- time-left (/ 1 60))))
 		(when (<= time-left 0)
 			(set time-left 0)
 			(set g.game-over true)
 			(set g.time-over true))
-		(set g.start-clock (+ g.start-clock 1)))
+		(when (not g.paused) (set g.start-clock (+ g.start-clock 1))))
 
 	:draw (fn []
+		(when g.paused (draw-big-overlay "PAUSED"))
 		(when (and g.game-over (not g.game-finished) (not g.time-over)) (draw-big-overlay "GAME OVER"))
 		(when (and g.game-over g.time-over) (draw-big-overlay "TIME OVER"))
-		(when (< g.start-clock start-max) (draw-start))
+		(when (and (not g.paused) (< g.start-clock start-max)) (draw-start))
 		(when player.entity (draw-lives))
 		(draw-score)
 		(draw-time)

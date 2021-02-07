@@ -185,6 +185,7 @@
 
 	:fullscreen false
 	:started false
+	:paused false
 	:game-over false
 	:time-over false
 	:game-finished false

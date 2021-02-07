@@ -5,14 +5,7 @@
 (local init-x (* g.grid 2.5))
 (local init-y (/ g.height 2))
 
-(local player-texture-size 48)
-(var animate-clock 0)
-(var left-clock 0)
-(var right-clock 0)
-(var clock 0)
-
 (var images nil)
-(var player-quad nil)
 
 (local bullets {})
 (var can-shoot true)
@@ -23,9 +16,7 @@
 
 (var shot-type 1)
 
-(local shot-diff-init (/ g.phi 3))
-(local shot-diff-max (/ g.phi 12))
-(var shot-diff shot-diff-init)
+(var shot-diff (/ g.phi 3))
 
 
 ; ------------------------------------
@@ -39,7 +30,7 @@
 	:collider (hc.circle start-x init-y 1)
 	:combo 0
 	:last-type false
-	:lives 0
+	:lives 2
 	:hit false})
 
 ; ------------------------------------
@@ -82,24 +73,6 @@
 	(if (> start-speed 0)
 		(set start-speed (- start-speed 0.0125))
 		(set start-speed 0)))
-
-
-; ------------------------------------
-; animate player
-; ------------------------------------
-
-(fn update-animate []
-	; (var x 0)
-	; (var y 0)
-	; (fn animate-center []
-	; 	(local current (% animate-clock (* g.animate-interval 4)))
-	; 	(when (or (and (>= current g.animate-interval) (< current (* g.animate-interval 2))) (>= current (* g.animate-interval 3)))
-	; 		(set y player-texture-size))
-	; 	(when (and (>= current (* g.animate-interval 2)) (< current (* g.animate-interval 3)))
-	; 		(set y (* player-texture-size 2))))
-	; (animate-center)
-	; (g.update-quad player-quad x y player-texture-size images.marisa)
-	(set animate-clock (+ animate-clock 1)))
 
 
 ; ------------------------------------
@@ -272,7 +245,6 @@
 	:init (fn []
 		(for [i 1 128] (table.insert bullets {}))
 		(set images (g.images "player" ["nitori" "hitbox" "bullet-double" "bullet-single" "bullet-homing"]))
-		; (set player-quad (g.quad player-texture-size images.marisa))
 		(set entity.collider.item-type :player))
 
 
@@ -299,17 +271,16 @@
 
 	:update (fn []
 		(local limit (* 10 20))
-		(when (< g.start-clock limit) (update-start))
-		(when (>= g.start-clock limit)
+		(when (and (not g.paused) (< g.start-clock limit)) (update-start))
+		(when (and (not g.paused) (>= g.start-clock limit))
 			(update-move)
 			(update-shot))
-		(update-bullets)
-		(update-animate)
-		(when (> invincible-clock 0) (set invincible-clock (- invincible-clock 1)))
+		(when (not g.paused)
+			(update-bullets)
+			(when (> invincible-clock 0) (set invincible-clock (- invincible-clock 1))))
 		(set player.entity entity)
 		(set player.bullets bullets)
-		(set player.invincible-clock invincible-clock)
-		(set clock (+ clock 1)))
+		(set player.invincible-clock invincible-clock))
 
 	:draw (fn []
 		(draw-bullets)
@@ -335,5 +306,3 @@
 
 
 
-	; (local offset (/ player-texture-size 2))
-	; (love.graphics.draw images.marisa player-quad (- entity.x 1) (- entity.y 1) 0 1 1 offset offset)

@@ -37,7 +37,8 @@
 				:shot-1 [:key:z :button:x]
 				:shot-2 [:key:x :button:a]
 				:shot-3 [:key:c :button:b]
-				:reload [:key:r :button:start]
+				:pause [:key:escape :button:start]
+				:reload [:key:r]
 			}})
 		(local joysticks (love.joystick.getJoysticks))
 		(for [i 1 (length joysticks)] (if (= i 1) (set baton-obj.joystick (. joysticks i))))
@@ -52,11 +53,14 @@
 		(input:update))
 
 
+	; LMAO DONT LOOK AT THIS
+
 	; -----------------------------------
 	; state
 	; -----------------------------------
 
 	:reload (fn [] (. (= (input:get :reload) 1)))
+	:pause (fn [] (. (= (input:get :pause) 1)))
 
 
 	; -----------------------------------
@@ -67,7 +71,6 @@
 	:right (fn [] (. (= (input:get :right) 1)))
 	:up (fn [] (. (= (input:get :up) 1)))
 	:down (fn [] (. (= (input:get :down) 1)))
-
 
 
 	; -----------------------------------

@@ -78,7 +78,7 @@
 	; -----------------------------------
 
 	:update (fn []
-  (update-sky))
+  (when (not g.paused) (update-sky)))
 
 	:draw (fn []
 		(draw-sky)

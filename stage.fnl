@@ -104,17 +104,18 @@
 	; -----------------------------------
 
 	:update (fn []
-		(class-enemy.update-entities)
-		(class-bullet.update-entities)
-		(class-block.update-entities)
-		(class-explosion.update-entities)
-		(class-indicator.update-entities)
-		(update-enemies)
-		(update-bullets)
-		(update-blocks)
-		(update-explosions)
-		(update-indicators)
-		(level-one.update))
+		(when (not g.paused)
+			(class-enemy.update-entities)
+			(class-bullet.update-entities)
+			(class-block.update-entities)
+			(class-explosion.update-entities)
+			(class-indicator.update-entities)
+			(update-enemies)
+			(update-bullets)
+			(update-blocks)
+			(update-explosions)
+			(update-indicators)
+			(level-one.update)))
 
 	:draw (fn []
 		(draw-enemies)

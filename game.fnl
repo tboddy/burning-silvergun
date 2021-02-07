@@ -43,9 +43,21 @@
 ; started loop
 ; ------------------------------------
 
+(var pausing false)
+
+(fn update-pause []
+	(when (and (controls.pause) (not pausing))
+		(set pausing true)
+		(set g.paused (if g.paused false true))
+		(if g.paused (sound.stop-bgm) (sound.play-bgm :stage-loop))
+		)
+	(when (not (controls.pause)) (set pausing false)))
+
 (fn update-game []
 	(background.update)
-	(when (not g.game-over) (player.update))
+	(when (not g.game-over)
+		(player.update)
+		(update-pause))
 	(stage.update)
 	(chrome.update))
 
