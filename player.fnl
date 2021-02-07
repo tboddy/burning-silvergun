@@ -108,7 +108,7 @@
 
 (fn spawn-bullet [angle double]
 	(local bullet (g.get-item bullets))
-	(local offset g.grid)
+	(local offset 8)
 	(set bullet.active true)
 	(set bullet.angle angle) 
 	(set bullet.x (+ entity.x (* (math.cos bullet.angle) offset)))

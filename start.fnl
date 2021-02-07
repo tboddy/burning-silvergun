@@ -109,7 +109,11 @@
 		(choose-menu-item))
 	(when (and (not (controls.shot-1)) (not (controls.shot-2)) (not (controls.shot-3))) (set choosing false)))
 
+(var played-bgm false)
 (fn update-menu []
+	(when (not played-bgm)
+		(set played-bgm true)
+		(sound.play-bgm :start))
 	(trigger-overlay fade-interval 3)
 	(trigger-overlay (* fade-interval 2) 2)
 	(trigger-overlay (* fade-interval 3) 1)

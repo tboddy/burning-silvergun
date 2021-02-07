@@ -7,6 +7,7 @@
 (global maid64 (require "lib.maid"))
 (global g (require "_globals"))
 (global controls (require "controls"))
+(global sound (require "sound"))
 (global start (require "start"))
 (global background (require "background"))
 (global class-explosion (require "classes.explosion"))
@@ -34,6 +35,7 @@
 	(love.graphics.setLineStyle :rough)
 	(love.graphics.setLineWidth 1)
 	(controls.init)
+	(sound.init)
 	(if g.started (g.init-game) (start.init)))
 
 
@@ -61,6 +63,7 @@
 
 (fn love.update [dt]
 	(controls.update)
+	(sound.update)
 	(when (controls.reload) (g.restart))
 	(if g.started (update-game dt) (start.update)))
 

@@ -539,12 +539,15 @@
 			(set enemy.y y)
 			(set enemy.type :robo-blue)
 			(set enemy.angle math.pi)
-			(set enemy.speed 0.75)
-			(set enemy.flags.angle-mod 0.01)
-			) (fn [enemy]
-				(when (and (>= enemy.clock 75) (< enemy.clock 120))
-					(set enemy.angle (- enemy.angle enemy.flags.angle-mod)))
-				)))
+			(set enemy.speed 1)
+			(set enemy.flags.angle-mod 0.0125))
+			(fn [enemy]
+				(when (>= enemy.clock 100)
+					(set enemy.speed (- enemy.speed 0.005))
+					(when (<= enemy.speed 0.67) (set enemy.speed 0.67))
+					(set enemy.angle (- enemy.angle enemy.flags.angle-mod))
+					(when (<= enemy.angle 0)
+						(set enemy.angle 0))))))
 	(spawn-enemy (/ g.height 4)))
 
 (fn wave-eight [])
@@ -567,7 +570,7 @@
 ; enemy order
 ; ------------------------------------
 
-(var current-enemy-section 1)
+(var current-enemy-section 2)
 (local enemy-sections [
 
 	(fn []
@@ -586,9 +589,9 @@
 
 	(fn []
 		(var base 0)
-		(set base (* 60 1.5))
-		(when (= clock base) (wave-six)))
-
+		(when (= clock base) (wave-seven)))
+		; (set base (* 60 1.5))
+		; (when (= clock base) (wave-six)))
 	])
 
 (fn update-enemies []
@@ -718,6 +721,20 @@
 
 
 ; ------------------------------------
+; bgm intro logic
+; ------------------------------------
+
+(var bgm-started nil)
+
+(fn update-bgm []
+	(when (and bgm-started (not sound.playing-bgm)) (sound.play-bgm :stage-loop))
+	(when (not bgm-started)
+		(sound.play-bgm :stage-intro)
+		(set bgm-started true)))
+
+
+
+; ------------------------------------
 ; extern
 ; ------------------------------------
 
@@ -726,6 +743,7 @@
 	:update (fn []
 		(update-enemies)
 		(when (and (> (length block-layout) 0) (= (% clock 32) 0)) (spawn-blocks))
+		(update-bgm)
 		(set clock (+ clock 1)))
 
 	})
