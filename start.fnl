@@ -4,7 +4,7 @@
 
 (var clock 0)
 (var overlay-type 4)
-(var scene 3)
+(var scene 1)
 (local offset 14)
 (local s-offset 10)
 (local fade-interval 10)

@@ -32,10 +32,11 @@
 ; player entity
 ; ------------------------------------
 
+(local start-x (* g.grid -10.5))
 (local entity {
-	:x init-x
+	:x start-x
 	:y init-y
-	:collider (hc.circle init-x init-y 1)
+	:collider (hc.circle start-x init-y 1)
 	:combo 0
 	:last-type false
 	:lives 99
@@ -74,6 +75,13 @@
 	(check-move)
 	(local collider-offset 0.5)
 	(entity.collider:moveTo (- entity.x collider-offset) (- entity.y collider-offset)))
+
+(var start-speed 2)
+(fn update-start []
+	(set entity.x (+ entity.x start-speed))
+	(if (> start-speed 0)
+		(set start-speed (- start-speed 0.01))
+		(set start-speed 0)))
 
 
 ; ------------------------------------
@@ -118,7 +126,7 @@
 		(set bullet.speed 10))
 	(when (= shot-type 3)
 		(set bullet.homing true)
-		(set bullet.damage 0.35)
+		(set bullet.damage 0.2)
 		(set bullet.speed 10))
 	(if bullet.homing
 		(set bullet.collider (hc.circle bullet.x bullet.y 8))
@@ -285,7 +293,9 @@
 	; -----------------------------------
 
 	:update (fn []
-		(when (> clock 10)
+		(local limit (* 10 20))
+		(when (< g.start-clock limit) (update-start))
+		(when (>= g.start-clock limit)
 			(update-move)
 			(update-shot))
 		(update-bullets)

@@ -184,7 +184,7 @@
 	:colors-arcade colors-arcade
 
 	:fullscreen false
-	:started false
+	:started true
 	:game-over false
 	:time-over false
 
@@ -200,6 +200,8 @@
 	:tick-rate (/ 1 60)
 
 	:hard-mode false
+
+	:start-clock 0
 
 
 	; -----------------------------------

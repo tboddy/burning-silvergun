@@ -8,6 +8,8 @@
 (local size 16)
 (local radius 4)
 
+(var images nil)
+
 
 ; ------------------------------------
 ; collision
@@ -45,7 +47,8 @@
 	:blocks {}
 
 	:init (fn []
-		(for [i 1 256] (table.insert blocks {})))
+		(for [i 1 256] (table.insert blocks {}))
+		(set images (g.images "stage" ["point"])))
 
 
 	; -----------------------------------
@@ -60,7 +63,7 @@
 		(set block.x (+ g.width (* g.grid 2)))
 		(set block.x (- block.x (* column 2)))
 		(set block.type type)
-		(set block.health (if (= type :d) 10 1))
+		(set block.health (if (= type :d) 10 0.1))
 		(set block.destructable (if (or (= type :d) (= type :x) (= type :X)) true false))
 		(set block.collider (if block.destructable (hc.rectangle block.x block.y size size) false))
 		(when block.collider  (set block.collider.item-type :block)))
@@ -186,7 +189,10 @@
 			(g.set-color doggy-color)
 			(love.graphics.rectangle :fill x y size size (/ radius 2))
 			(g.set-color platform-color)
-			(g.mask :half (fn [] (love.graphics.rectangle :fill x (+ y 1) size (- size 1) (/ radius 2)))))
+			(g.mask :half (fn [] (love.graphics.rectangle :fill x (+ y 1) size (- size 1) (/ radius 2))))
+			(love.graphics.draw images.point x (+ y 1))
+			(g.set-color :brown-light)
+			(love.graphics.draw images.point x y))
 
 		(when (= level 1)
 			(when (or (= block.type :o) (= block.type :x) (= block.type :X) (= block.type :O) (= block.type :d)) (floor-shadow))

@@ -9,7 +9,8 @@
 (local time-limit (* 60 2))
 (var time-left time-limit)
 
-(var start-clock 0)
+(local fade-interval 10)
+(local start-max (* fade-interval 22))
 
 
 ; ------------------------------------
@@ -49,13 +50,15 @@
 ; ------------------------------------
 
 (fn draw-start []
+	(g.label (.. (if g.hard-mode "HARD" "EASY") " MODE START!") nil (- (/ g.height 2) 8) nil :center nil true true)
 	(g.set-color :black)
-	(local fade-interval 10)
-	(when (< start-clock fade-interval) (love.graphics.rectangle :fill 0 0 g.width g.height))
-	(when (and (>= start-clock fade-interval) (< start-clock (* fade-interval 2))) (g.mask :most (fn [] (love.graphics.rectangle :fill 0 0 g.width g.height))))
-	(when (and (>= start-clock (* fade-interval 2)) (< start-clock (* fade-interval 3))) (g.mask :half (fn [] (love.graphics.rectangle :fill 0 0 g.width g.height))))
-	(when (and (>= start-clock (* fade-interval 3)) (< start-clock (* fade-interval 4))) (g.mask :quarter (fn [] (love.graphics.rectangle :fill 0 0 g.width g.height))))
-	(g.clear-color))
+	(when (< g.start-clock fade-interval) (love.graphics.rectangle :fill 0 0 g.width g.height))
+	(when (and (>= g.start-clock fade-interval) (< g.start-clock (* fade-interval 2))) (g.mask :most (fn [] (love.graphics.rectangle :fill 0 0 g.width g.height))))
+	(when (and (>= g.start-clock (* fade-interval 2)) (< g.start-clock (* fade-interval 3))) (g.mask :half (fn [] (love.graphics.rectangle :fill 0 0 g.width g.height))))
+	(when (and (>= g.start-clock (* fade-interval 3)) (< g.start-clock (* fade-interval 4))) (g.mask :quarter (fn [] (love.graphics.rectangle :fill 0 0 g.width g.height))))
+	(g.clear-color)
+
+	)
 
 
 ; ------------------------------------
@@ -70,21 +73,21 @@
 	; -----------------------------------
 
 	:update (fn []
-		(set time-left (- time-left (/ 1 60)))
+		(when (and (not g.game-over) (not g.time-over)) (set time-left (- time-left (/ 1 60))))
 		(when (<= time-left 0)
 			(set time-left 0)
 			(set g.game-over true)
 			(set g.time-over true))
-		(set start-clock (+ start-clock 1)))
+		(set g.start-clock (+ g.start-clock 1)))
 
 	:draw (fn []
-		(draw-score)
-		(draw-time)
-		(when player.entity (draw-lives))
-		; (draw-debug)
 		(when (and g.game-over (not g.time-over)) (draw-big-overlay "GAME OVER"))
 		(when (and g.game-over g.time-over) (draw-big-overlay "TIME OVER"))
-		(draw-start)
+		(when (< g.start-clock start-max) (draw-start))
+		(when player.entity (draw-lives))
+		(draw-score)
+		(draw-time)
+		; (draw-debug)
 		)
 
 

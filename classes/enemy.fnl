@@ -81,8 +81,10 @@
 
 	:update (fn [enemy]
 		(enemy.update-func enemy)
-		(set enemy.x (+ enemy.x (* (math.cos enemy.angle) enemy.speed)))
-		(set enemy.y (+ enemy.y (* (math.sin enemy.angle) enemy.speed)))
+		(when (and enemy.speed enemy.angle)
+			(set enemy.x (+ enemy.x (* (math.cos enemy.angle) enemy.speed)))
+			(set enemy.y (+ enemy.y (* (math.sin enemy.angle) enemy.speed)))
+			)
 		(when enemy.visible
 			(when enemy.collider
 				(enemy.collider:moveTo enemy.x enemy.y)
