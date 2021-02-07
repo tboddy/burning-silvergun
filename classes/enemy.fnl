@@ -16,6 +16,7 @@
 (fn kill-enemy [enemy]
 	(set enemy.active false)
 	(class-explosion.spawn enemy.x enemy.y 3)
+ (sound.play-sfx :explosion1)
 	(set g.current-score (+ g.current-score 100))
 	(var new-type nil)
 	(when (string.find enemy.type :red) (set new-type :red))

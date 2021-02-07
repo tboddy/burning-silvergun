@@ -21,6 +21,7 @@
 				(local doggy-score (* g.current-doggy 900))
 				(set g.current-score (+ g.current-score doggy-score))
 				(set g.current-doggy (+ g.current-doggy 1))
+			 (sound.play-sfx :bonus)
 				(class-indicator.spawn (+ block.x (/ size 2)) (+ block.y (/ size 2)) (.. "BONUS " doggy-score)))
 			(when (or (= block.type :x) (= block.type :d) (= block.type :X)) (set block.type :O))
 			(when block.collider

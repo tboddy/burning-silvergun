@@ -39,7 +39,7 @@
 	:collider (hc.circle start-x init-y 1)
 	:combo 0
 	:last-type false
-	:lives 99
+	:lives 0
 	:hit false})
 
 ; ------------------------------------
@@ -136,6 +136,7 @@
 	(set bullet.double (if double true false)))
 
 (fn spawn-bullets []
+	(sound.play-sfx :playershot)
 	(when (= shot-type 1) (spawn-bullet 0 true))
 	(when (or (= shot-type 2) (= shot-type 3))
 		(spawn-bullet (- 0 shot-diff) nil)
@@ -285,7 +286,11 @@
 			(class-explosion.spawn entity.x entity.y color true)
 			(set entity.x init-x)
 			(set entity.y init-y)
-			(when (< entity.lives 0) (set g.game-over true)))
+			(when (< entity.lives 0)
+				(set g.game-over true)
+				(sound.stop-bgm)
+				(sound.play-sfx :gameover)
+				))
 
 
 	; -----------------------------------

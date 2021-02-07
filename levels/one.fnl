@@ -187,6 +187,7 @@
 	(fn spawn-bullets [enemy]
 		(local count (if g.hard-mode 9 1))
 		(var angle (g.get-angle enemy player.entity))
+	 (sound.play-sfx :bullet1)
 		(for [i 1 count]
 			(class-bullet.spawn (fn [bullet]
 				(set bullet.x enemy.x)
@@ -224,6 +225,7 @@
 		(local count (if g.hard-mode 18 9))
 		(var angle (g.get-angle enemy player.entity))
 		(when alt (set angle (+ angle (/ math.pi count))))
+	 (sound.play-sfx :bullet2)
 		(for [i 1 count]
 			(class-bullet.spawn (fn [bullet]
 				(set bullet.x enemy.x)
@@ -272,6 +274,7 @@
 				(when (and enemy.flags.shooter (= enemy.clock 60))
 					(local count 20)
 					(local limit 6)
+					(sound.play-sfx :bullet3)
 					(var angle (- (g.get-angle enemy player.entity) (* (- (/ limit 2) 1) (/ g.tau count))))
 					(for [i 1 count]
 						(when (< i limit)
@@ -336,6 +339,7 @@
 		(fn spawn-bullets [enemy alt]
 			(local count 5)
 			(var angle enemy.flags.bullet-angle)
+			(sound.play-sfx :bullet1)
 			(for [i 1 count]
 				(class-bullet.spawn (fn [bullet]
 					(set bullet.x enemy.x)
@@ -379,6 +383,7 @@
 			(local count 4)
 			(var angle (if alt (+ enemy.flags.bullet-angle-2 (/ math.pi count)) enemy.flags.bullet-angle-2))
 			(class-explosion.spawn enemy.x boss-offset-top 1 nil true)
+			(sound.play-sfx :bullet2)
 			(for [i 1 count]
 					(class-bullet.spawn (fn [bullet]
 						(set bullet.x enemy.x)
@@ -400,6 +405,7 @@
 		(fn spawn-bullets []
 			(var mod enemy.flags.bullet-mod-1)
 			(when alt (set mod (* -1 mod)))
+			(sound.play-sfx :bullet3)
 			(class-bullet.spawn (fn [bullet]
 				(set bullet.x enemy.x)
 				(set bullet.y enemy.y)
@@ -418,6 +424,7 @@
 			(local count 3)
 			(var angle enemy.flags.bullet-angle-2)
 			(class-explosion.spawn enemy.x boss-offset-bottom 1 nil true)
+			(sound.play-sfx :bullet2)
 			(for [i 1 count]
 				(class-bullet.spawn (fn [bullet]
 					(set bullet.x enemy.x)
@@ -570,7 +577,7 @@
 ; enemy order
 ; ------------------------------------
 
-(var current-enemy-section 2)
+(var current-enemy-section 1)
 (local enemy-sections [
 
 	(fn []
@@ -743,7 +750,7 @@
 	:update (fn []
 		(update-enemies)
 		(when (and (> (length block-layout) 0) (= (% clock 32) 0)) (spawn-blocks))
-		(update-bgm)
+		(when (not g.game-over) (update-bgm))
 		(set clock (+ clock 1)))
 
 	})
