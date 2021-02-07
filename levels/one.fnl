@@ -446,6 +446,7 @@
 			(set enemy.angle math.pi))
 			(fn [enemy]
 				(when enemy.visible
+
 					(if (> enemy.speed 0)
 						(set enemy.speed (- enemy.speed 0.01))
 						(set enemy.speed 0)))
@@ -518,7 +519,7 @@
 			(set enemy.angle math.pi)
 			(set enemy.flags.angle-mod 0.0025)
 			(when alt (set enemy.flags.angle-mod (* -1 enemy.flags.angle-mod)))
-			(set enemy.type (if alt :robo-yellow :robo-blue)))
+			(set enemy.type (if alt :robo-yellow :robo-red)))
 			(fn [enemy]
 				(when (= enemy.clock (* 60 1.5)) (spawn-bullets enemy))
 				(when (>= enemy.clock (* 60 1.5))
@@ -530,7 +531,21 @@
 		(spawn-enemy (+ i 4) (/ g.height 3))
 		(spawn-enemy (+ i 6) (* (/ g.height 3) 2) true)))
 
-(fn wave-seven [])
+(fn wave-seven []
+	(fn spawn-enemy [y]
+		(class-enemy.spawn (fn [enemy]
+			(set enemy.health 5)
+			(set enemy.x (+ g.width (* g.grid 2)))
+			(set enemy.y y)
+			(set enemy.type :robo-blue)
+			(set enemy.angle math.pi)
+			(set enemy.speed 0.75)
+			(set enemy.flags.angle-mod 0.01)
+			) (fn [enemy]
+				(when (and (>= enemy.clock 75) (< enemy.clock 120))
+					(set enemy.angle (- enemy.angle enemy.flags.angle-mod)))
+				)))
+	(spawn-enemy (/ g.height 4)))
 
 (fn wave-eight [])
 
@@ -548,42 +563,45 @@
 (fn boss-three [])
 
 
-(fn wave-thirteen [])
-
-(fn wave-fourteen [])
-
-(fn wave-fifteen [])
-
-(fn wave-sixteen [])
-
-(fn boss-four [])
-
-
 ; ------------------------------------
 ; enemy order
 ; ------------------------------------
 
+(var current-enemy-section 1)
+(local enemy-sections [
+
+	(fn []
+		(var base 0)
+		(set base (* 60 3.5))
+		(when (= clock base) (wave-one))
+		(when (= clock (+ base (* 60 4.75))) (wave-two))
+		(set base (+ base (* 60 11.5)))
+		(when (= clock base) (wave-three))
+		(when (= clock (+ base (* 60 4))) (wave-three true))
+		(set base (+ base (* 60 8.5)))
+		(when (= clock base) (wave-four))
+		(set base (+ base (* 60 10.5)))
+		(when (= clock base) (boss-one))
+		(when (= clock (+ base 60)) (set g.in-boss true)))
+
+	(fn []
+		(var base 0)
+		(set base (* 60 1.5))
+		(when (= clock base) (wave-six)))
+
+	])
+
 (fn update-enemies []
-
-
-	(var base 0)
-	(when (= clock base) (wave-six))
-
-
-	; (set base (* 60 3.5))
-	; (when (= clock base) (wave-one))
-	; (when (= clock (+ base (* 60 4.75))) (wave-two))
-	; (set base (+ base (* 60 11.5)))
-	; (when (= clock base) (wave-three))
-	; (when (= clock (+ base (* 60 4))) (wave-three true))
-	; (set base (+ base (* 60 8.5)))
-	; (when (= clock base) (wave-four))
-	; (set base (+ base (* 60 10.5)))
-	; (when (= clock base) (boss-one))
-
-	; figure out how to reset everything, i.e. change level
-
-	)
+	(local func (. enemy-sections current-enemy-section))
+	(func)
+	(when g.in-boss
+		(when (= g.enemy-count 0)
+			(set g.in-boss false)
+			(set clock -1)
+			(if (<= (+ current-enemy-section 1) (length enemy-sections))
+				(set current-enemy-section (+ current-enemy-section 1))
+				(set g.game-finished true))))
+	(when g.game-finished (set g.game-over true)))
 
 
 ; ------------------------------------

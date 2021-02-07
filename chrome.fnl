@@ -81,7 +81,7 @@
 		(set g.start-clock (+ g.start-clock 1)))
 
 	:draw (fn []
-		(when (and g.game-over (not g.time-over)) (draw-big-overlay "GAME OVER"))
+		(when (and g.game-over (not g.game-finished) (not g.time-over)) (draw-big-overlay "GAME OVER"))
 		(when (and g.game-over g.time-over) (draw-big-overlay "TIME OVER"))
 		(when (< g.start-clock start-max) (draw-start))
 		(when player.entity (draw-lives))

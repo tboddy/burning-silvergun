@@ -13,9 +13,12 @@
 ; -----------------------------------
 
 (fn update-enemies []
+	(set g.enemy-count 0)
 	(for [i 1 (length class-enemy.enemies)]
 		(local enemy (. class-enemy.enemies i))
-		(when enemy.active (class-enemy.update enemy))))
+		(when enemy.active
+			(set g.enemy-count (+ g.enemy-count 1))
+			(class-enemy.update enemy))))
 
 (fn draw-enemies []
 	(for [i 1 (length class-enemy.enemies)]

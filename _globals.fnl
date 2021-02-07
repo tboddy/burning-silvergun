@@ -187,6 +187,7 @@
 	:started true
 	:game-over false
 	:time-over false
+	:game-finished false
 
 	:animate-interval 15
 
@@ -202,6 +203,9 @@
 	:hard-mode false
 
 	:start-clock 0
+
+	:in-boss false
+	:enemy-count 0
 
 
 	; -----------------------------------

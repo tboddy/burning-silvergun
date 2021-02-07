@@ -156,7 +156,7 @@
 		(set shot-clock 0))
 	(var interval nil)
 	(when (= shot-type 1) (set interval 10))
-	(when (= shot-type 2) (set interval 30))
+	(when (= shot-type 2) (set interval 35))
 	(when (= shot-type 3) (set interval 10))
 	(local limit (* interval 1))
 	(local max (* interval 1))
@@ -173,7 +173,7 @@
 (fn bullet-collision [bullet]
 	(bullet.collider:moveTo bullet.x bullet.y)
 	(each [item position (pairs (hc.collisions bullet.collider))]
-		(when (and item.item-type (or (= item.item-type :enemy) (= item.item-type :block)))
+		(when (and item.item-type (or (and (= item.item-type :enemy) item.item-killable) (= item.item-type :block)))
 			(set bullet.collider.hit true)
 			(set item.hit-damage bullet.damage)
 			(set item.item-hit true)))

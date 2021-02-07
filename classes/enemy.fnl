@@ -5,6 +5,9 @@
 (var images nil)
 (local enemies {})
 
+(local fade-interval 12)
+(local fade-max (* fade-interval 4))
+
 
 ; ------------------------------------
 ; collision
@@ -68,7 +71,9 @@
 		(set enemy.update-func update-func)
 		(var enemy-image (. images enemy.type))
 		(set enemy.collider (hc.rectangle enemy.x enemy.y (g.img-width enemy-image) (g.img-height enemy-image)))
-		(when enemy.collider  (set enemy.collider.item-type :enemy)))
+		(when enemy.collider
+			(set enemy.collider.item-type :enemy)
+			(set enemy.collider.item-killable false)))
 
 
 	; -----------------------------------
@@ -83,17 +88,18 @@
 		(enemy.update-func enemy)
 		(when (and enemy.speed enemy.angle)
 			(set enemy.x (+ enemy.x (* (math.cos enemy.angle) enemy.speed)))
-			(set enemy.y (+ enemy.y (* (math.sin enemy.angle) enemy.speed)))
-			)
+			(set enemy.y (+ enemy.y (* (math.sin enemy.angle) enemy.speed))))
 		(when enemy.visible
 			(when enemy.collider
+				(when (>= enemy.clock fade-max) (set enemy.collider.item-killable true))
 				(enemy.collider:moveTo enemy.x enemy.y)
 				(when enemy.collider.item-hit
 					(set enemy.collider.item-hit false)
 					(set enemy.health (- enemy.health enemy.collider.hit-damage))
 					(when (<= enemy.health 0) (kill-enemy enemy))))
 			(set enemy.clock (+ enemy.clock 1)))
-		(when (< enemy.x (+ g.width (/ enemy.size 2))) (set enemy.visible true))
+		(when (< enemy.x (+ g.width (/ enemy.size 2)))
+			(set enemy.visible true))
 		(when (< enemy.x (- 0 (/ enemy.size 2)))
 			(set enemy.active false)
 			(when enemy.collider
@@ -101,7 +107,10 @@
 				(set enemy.collider false))))
 
 	:draw (fn [enemy]
-		(g.img (. images enemy.type) enemy.x enemy.y))
+		(when (< enemy.clock (* fade-interval 2)) (g.mask :quarter (fn [] (g.img (. images enemy.type) enemy.x enemy.y))))
+		(when (and (>= enemy.clock (* fade-interval 2)) (< enemy.clock (* fade-interval 3))) (g.mask :half (fn [] (g.img (. images enemy.type) enemy.x enemy.y))))
+		(when (and (>= enemy.clock (* fade-interval 3)) (< enemy.clock (* fade-interval 4))) (g.mask :most (fn [] (g.img (. images enemy.type) enemy.x enemy.y))))
+		(when (>= enemy.clock (* fade-interval 4))	(g.img (. images enemy.type) enemy.x enemy.y)))
 	
 
 	})
