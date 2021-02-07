@@ -163,11 +163,10 @@
 	(var x 8)
 	(var y (- g.height 16))
 	(g.label "HI EASY" x (- y s-offset) nil nil nil nil true)
-	(g.label (g.process-score g.high-score) x y nil nil nil nil true)
+	(g.label (g.process-score g.high-score-easy) x y nil nil nil nil true)
 	(set x (- g.width x))
 	(g.label "HI HARD" nil (- y s-offset) nil :right x nil true)
-	(g.label (g.process-score g.high-score) nil y nil :right x nil true)
-	)
+	(g.label (g.process-score g.high-score-hard) nil y nil :right x nil true))
 
 
 ; ------------------------------------

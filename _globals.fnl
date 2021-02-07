@@ -36,89 +36,6 @@
 (fn clear-color []
 	(love.graphics.setColor colors.white))
 
-; (local colors-arcade [ ;woodblock
-; 	(hex.rgb "2b2821")
-; 	(hex.rgb "624c3c")
-; 	(hex.rgb "d9ac8b")
-; 	(hex.rgb "e3cfb4")
-; 	(hex.rgb "243d5c")
-; 	(hex.rgb "5d7275")
-; 	(hex.rgb "5c8b93")
-; 	(hex.rgb "b1a58d")
-; 	(hex.rgb "b03a48")
-; 	(hex.rgb "d4804d")
-; 	(hex.rgb "e0c872")
-; 	(hex.rgb "3e6958")
-; 	])
-
-; (local colors-arcade [ ;psygnosia
-; 	(hex.rgb "000000")
-; 	(hex.rgb "1b1e29")
-; 	(hex.rgb "362747")
-; 	(hex.rgb "443f41")
-; 	(hex.rgb "52524c")
-; 	(hex.rgb "64647c")
-; 	(hex.rgb "736150")
-; 	(hex.rgb "77785b")
-; 	(hex.rgb "9ea4a7")
-; 	(hex.rgb "cbe8f7")
-; 	(hex.rgb "e08b79")
-; 	(hex.rgb "a2324e")
-; 	(hex.rgb "003308")
-; 	(hex.rgb "084a3c")
-; 	(hex.rgb "546a00")
-; 	(hex.rgb "516cbf")
-; 	])
-
-; (local colors-arcade [ ;arcade standard
-; 	(hex.rgb "f1f0ee")
-; 	(hex.rgb "ff4d4d")
-; 	(hex.rgb "9f1e31")
-; 	(hex.rgb "ffc438")
-; 	(hex.rgb "f06c00")
-; 	(hex.rgb "f1c284")
-; 	(hex.rgb "c97e4f")
-; 	(hex.rgb "973f3f")
-; 	(hex.rgb "57142e")
-; 	(hex.rgb "72cb25")
-; 	(hex.rgb "238531")
-; 	(hex.rgb "0a4b4d")
-; 	(hex.rgb "30c5ad")
-; 	(hex.rgb "2f7e83")
-; 	(hex.rgb "69deff")
-; 	(hex.rgb "33a5ff")
-; 	(hex.rgb "3259e2")
-; 	(hex.rgb "28237b")
-; 	(hex.rgb "c95cd1")
-; 	(hex.rgb "6c349d")
-; 	(hex.rgb "ffaabc")
-; 	(hex.rgb "e55dac")
-; 	(hex.rgb "17191b")
-; 	(hex.rgb "96a5ab")
-; 	(hex.rgb "586c79")
-; 	(hex.rgb "2a3747")
-; 	(hex.rgb "b9a588")
-; 	(hex.rgb "7e6352")
-; 	(hex.rgb "412f2f")])
-
-(local colors-arcade [
-	(hex.rgb :050403)
-	(hex.rgb :221f31)
-	(hex.rgb :543516)
-	(hex.rgb :9b6e2d)
-	(hex.rgb :e1b047)
-	(hex.rgb :f5ee9b)
-	(hex.rgb :fefefe)
-	(hex.rgb :8be1e0)
-	(hex.rgb :7cc264)
-	(hex.rgb :678fcb)
-	(hex.rgb :316f23)
-	(hex.rgb :404a68)
-	(hex.rgb :a14d3f)
-	(hex.rgb :a568d4)
-	(hex.rgb :9a93b7)
-	(hex.rgb :ea9182)])
-
 ; ------------------------------------
 ; masks
 ; ------------------------------------
@@ -181,7 +98,8 @@
 
 	:colors colors
 	:clear-color clear-color
-	:colors-arcade colors-arcade
+
+	:save-table nil
 
 	:fullscreen false
 	:started false
@@ -230,10 +148,8 @@
 	; love helpers
 	; -----------------------------------
 
-	:set-color (fn [color arcade]
-		(if arcade
-			(love.graphics.setColor (. colors-arcade color))
-			(love.graphics.setColor (. colors color))))
+	:set-color (fn [color]
+		(love.graphics.setColor (. colors color)))
 
 	:quad (fn [size image] (. (love.graphics.newQuad 0 0 size size image)))
 
@@ -302,7 +218,8 @@
 	; -----------------------------------
 
 	:current-score 0
-	:high-score 0
+	:high-score-easy 0
+	:high-score-hard 0
 	:current-doggy 1
 
 	:process-score (fn [input]
@@ -318,6 +235,16 @@
 	:mask do-mask
 
 	:enemies [] ; FUCK
+
+
+	; -----------------------------------
+	; fullscreen
+	; -----------------------------------
+
+	:do-fullscreen (fn []
+		(print "go fullscreen")
+		)
+
 
 
 	})

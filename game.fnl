@@ -2,6 +2,7 @@
 ; vars
 ; ------------------------------------
 
+(global bitser (require "lib.bitser"))
 (global hex (require "lib.hex"))
 (global hc (require "lib.hc"))
 (global maid64 (require "lib.maid"))
@@ -27,6 +28,17 @@
 	(player.init)
 	(stage.init)))
 
+(fn load-score []
+	(local score-data (love.filesystem.read "score.lua"))
+	(when score-data
+		(set g.save-table (bitser.loads score-data))
+		(when g.save-table.high-score-easy (set g.high-score-easy g.save-table.high-score-easy))
+		(when g.save-table.high-score-hard (set g.high-score-hard g.save-table.high-score-hard))
+		(when (and g.save-table.fullscreen (or (= g.save-table.fullscreen true) (= g.save-table.fullscreen :true))) (g.do-fullscreen))
+		)
+	(when (not score-data) (set g.save-table {}))
+	)
+
 (fn love.load []
 	(math.randomseed 1419)
 	(love.window.setTitle "assfart")
@@ -34,6 +46,7 @@
 	(maid64.setup g.width g.height)
 	(love.graphics.setLineStyle :rough)
 	(love.graphics.setLineWidth 1)
+	(load-score)
 	(controls.init)
 	(sound.init)
 	(if g.started (g.init-game) (start.init)))

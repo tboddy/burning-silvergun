@@ -13,6 +13,7 @@
 (local start-max (* 60 4.5))
 
 
+
 ; ------------------------------------
 ; hud
 ; ------------------------------------
@@ -56,9 +57,21 @@
 	(when (and (>= g.start-clock fade-interval) (< g.start-clock (* fade-interval 2))) (g.mask :most (fn [] (love.graphics.rectangle :fill 0 0 g.width g.height))))
 	(when (and (>= g.start-clock (* fade-interval 2)) (< g.start-clock (* fade-interval 3))) (g.mask :half (fn [] (love.graphics.rectangle :fill 0 0 g.width g.height))))
 	(when (and (>= g.start-clock (* fade-interval 3)) (< g.start-clock (* fade-interval 4))) (g.mask :quarter (fn [] (love.graphics.rectangle :fill 0 0 g.width g.height))))
-	(g.clear-color)
+	(g.clear-color))
 
-	)
+
+; ------------------------------------
+; game over shit
+; ------------------------------------
+
+(var saved-score false)
+(fn update-game-over []
+	(when (not saved-score)
+		(when (and g.hard-mode (> g.current-score g.high-score-hard)) (set g.save-table.high-score-hard g.current-score))
+		(when (and (not g.hard-mode) (> g.current-score g.high-score-easy)) (set g.save-table.high-score-easy g.current-score))
+		(local save-str (bitser.dumps g.save-table))
+		(love.filesystem.write "score.lua" save-str)
+		(set saved-score true)))
 
 
 ; ------------------------------------
@@ -78,7 +91,8 @@
 			(set time-left 0)
 			(set g.game-over true)
 			(set g.time-over true))
-		(when (not g.paused) (set g.start-clock (+ g.start-clock 1))))
+		(when (not g.paused) (set g.start-clock (+ g.start-clock 1)))
+		(when g.game-over (update-game-over)))
 
 	:draw (fn []
 		(when g.paused (draw-big-overlay "PAUSED"))

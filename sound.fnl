@@ -30,9 +30,8 @@
    (tset sfx-files name (love.audio.newSource (.. "sfx/" name ".wav") :static))
    (local file (. sfx-files name))
    (file:setVolume sfx-volume)
-   (when (= name :playershot) (file:setVolume 0.3))
-   (when (or (= name :bullet1) (= name :bullet2) (= name :bullet3)) (file:setVolume 0.4))
-
+   ; (when (= name :playershot) (file:setVolume 0.3))
+   ; (when (or (= name :bullet1) (= name :bullet2) (= name :bullet3)) (file:setVolume 0.45))
    )
 
   (for [i 1 (length bgm-names)]
