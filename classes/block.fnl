@@ -64,7 +64,7 @@
 		(set block.x (+ g.width (* g.grid 2)))
 		(set block.x (- block.x (* column 2)))
 		(set block.type type)
-		(set block.health (if (= type :d) 10 0.1))
+		(set block.health (if (= type :d) 5 0.1))
 		(set block.destructable (if (or (= type :d) (= type :x) (= type :X)) true false))
 		(set block.collider (if block.destructable (hc.rectangle block.x block.y size size) false))
 		(when block.collider  (set block.collider.item-type :block)))

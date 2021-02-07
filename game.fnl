@@ -41,8 +41,8 @@
 
 (fn love.load []
 	(math.randomseed 1419)
-	(love.window.setTitle "assfart")
-	(love.window.setMode (* g.width g.scale) (* g.height g.scale) {:vsync false :x 480 :y 256 :minwidth g.width :minheight g.height :resizable true})
+	(love.window.setTitle "burning silvergun")
+	(love.window.setMode (* g.width g.scale) (* g.height g.scale) {:vsync false :x 128 :y 128 :minwidth g.width :minheight g.height :resizable true})
 	(maid64.setup g.width g.height)
 	(love.graphics.setLineStyle :rough)
 	(love.graphics.setLineWidth 1)

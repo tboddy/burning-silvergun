@@ -69,7 +69,7 @@
 ; main menu
 ; ------------------------------------
 
-(local menu-items ["START EASY" "START HARD" "CONTROLS" "FULLSCREEN" "EXIT"])
+(local menu-items ["START EASY" "START HARD" "HOW TO" "FULLSCREEN" "EXIT"])
 (var active-menu 1)
 (var can-move false)
 (var moving false)

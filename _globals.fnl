@@ -94,7 +94,7 @@
 	:width g-width
 	:height g-height
 
-	:scale 2
+	:scale 3
 
 	:colors colors
 	:clear-color clear-color
@@ -102,7 +102,7 @@
 	:save-table nil
 
 	:fullscreen false
-	:started false
+	:started true
 	:paused false
 	:game-over false
 	:time-over false
@@ -124,7 +124,7 @@
 
 	:tick-rate (/ 1 60)
 
-	:hard-mode false
+	:hard-mode true
 
 	:start-clock 0
 

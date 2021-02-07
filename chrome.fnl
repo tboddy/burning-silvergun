@@ -6,7 +6,7 @@
 (local y 6)
 (local offset 10)
 
-(local time-limit (* 60 2))
+(local time-limit (* 60 3))
 (var time-left time-limit)
 
 (local fade-interval 10)

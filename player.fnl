@@ -30,7 +30,7 @@
 	:collider (hc.circle start-x init-y 1)
 	:combo 0
 	:last-type false
-	:lives 9999
+	:lives 66
 	:hit false})
 
 ; ------------------------------------
