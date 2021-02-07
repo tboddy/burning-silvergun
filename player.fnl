@@ -32,7 +32,7 @@
 ; player entity
 ; ------------------------------------
 
-(local start-x (* g.grid -10.5))
+(local start-x (* g.grid -13.5))
 (local entity {
 	:x start-x
 	:y init-y
@@ -76,11 +76,11 @@
 	(local collider-offset 0.5)
 	(entity.collider:moveTo (- entity.x collider-offset) (- entity.y collider-offset)))
 
-(var start-speed 2)
+(var start-speed 2.5)
 (fn update-start []
 	(set entity.x (+ entity.x start-speed))
 	(if (> start-speed 0)
-		(set start-speed (- start-speed 0.01))
+		(set start-speed (- start-speed 0.0125))
 		(set start-speed 0)))
 
 

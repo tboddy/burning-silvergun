@@ -10,7 +10,7 @@
 (var time-left time-limit)
 
 (local fade-interval 10)
-(local start-max (* fade-interval 22))
+(local start-max (* 60 4.5))
 
 
 ; ------------------------------------

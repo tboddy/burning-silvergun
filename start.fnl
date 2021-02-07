@@ -90,15 +90,21 @@
 	(when (or (= active-menu 1) (= active-menu 2))
 		(set g.hard-mode (if (= active-menu 2) true false))
 		(set clock -1)
+		(sound.stop-bgm)
+		(sound.play-sfx :start)
 		(set starting true))
-	(when (= active-menu 3) (set scene 4))
+	(when (= active-menu 3)
+		(sound.play-sfx :menuchange)
+		(set scene 4))
 	(when (= active-menu 4) (love.event.quit)))
 
 (fn update-menu-controls []
 	(when (and (not moving) (controls.up))
+		(sound.play-sfx :menuchange)
 		(set active-menu (- active-menu 1))
 		(set moving true))
 	(when (and (not moving) (controls.down))
+		(sound.play-sfx :menuchange)
 		(set active-menu (+ active-menu 1))
 		(set moving true))
 	(when (and (not (controls.up)) (not (controls.down))) (set moving false))
@@ -200,6 +206,7 @@
 (fn update-controls []
 	(when (and (or (controls.shot-1) (controls.shot-2) (controls.shot-3)) (not choosing))
 		(set choosing true)
+		(sound.play-sfx :menuchange)
 		(set scene 3))
 	(when (and (not (controls.shot-1)) (not (controls.shot-2)) (not (controls.shot-3))) (set choosing false)))
 
