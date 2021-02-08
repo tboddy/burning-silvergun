@@ -805,7 +805,7 @@
 ; enemy order
 ; ------------------------------------
 
-(var current-enemy-section 3)
+(var current-enemy-section 1)
 (local enemy-sections [
 
 	(fn []
@@ -840,20 +840,22 @@
 		(set base (+ base (* 60 10)))
 		(when (= clock base) (boss-two))
 		(set base (+ base 1))
-		(when (= clock base) (set g.in-boss true)))
+		(when (= clock base) (set g.in-boss true)))])
 
-	(fn []
-		(when (= clock 60) (boss-three)))])
-
-
+(var did-final false)
 (fn update-enemies []
-	(local func (. enemy-sections current-enemy-section))
-	(func)
+	(when (. enemy-sections current-enemy-section)
+		(local func (. enemy-sections current-enemy-section))
+		(func))
 	(when g.in-boss
 		(when (= g.enemy-count 0)
 			(set g.in-boss false)
 			(set clock -60)
-			(set current-enemy-section (+ current-enemy-section 1))))
+			(set current-enemy-section (+ current-enemy-section 1))
+			(when (and (not did-final) (>= current-enemy-section 3))
+				(set did-final true)
+				(boss-three))
+			))
 	(when g.game-finished (set g.game-over true)))
 
 

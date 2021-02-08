@@ -139,7 +139,7 @@ local function _4_(enemy)
   if (enemy.x < (g.width + (enemy.size / 2))) then
     enemy.visible = true
   end
-  if (enemy.x < (0 - (enemy.size / 2))) then
+  if (enemy.visible and ((enemy.y < (0 - enemy.size)) or (enemy.y > (g.height + enemy.size + 2)) or (enemy.x < (0 - (enemy.size / 2))) or (enemy.x > (g.width + enemy.size + 2)))) then
     enemy.active = false
     if enemy.collider then
       hc.remove(enemy.collider)

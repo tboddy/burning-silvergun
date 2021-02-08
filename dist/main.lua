@@ -1,5 +1,3 @@
--- local fennel = require('lib.fennel')
--- table.insert(package.loaders or package.searchers, fennel.searcher)
 maskshader = love.graphics.newShader([[vec4 effect(vec4 color, Image texture, vec2 texture_coords, vec2 screen_coords){ if(Texel(texture, texture_coords).rgb == vec3(0.0)) {discard;} return vec4(1.0); }]])
 runhack = function(tickRate)
   if love.load then love.load(love.arg.parseGameArguments(arg), arg) end

@@ -102,7 +102,7 @@
 	:save-table nil
 
 	:fullscreen false
-	:started true
+	:started false
 	:paused false
 	:game-over false
 	:time-over false
@@ -124,7 +124,7 @@
 
 	:tick-rate (/ 1 60)
 
-	:hard-mode true
+	:hard-mode false
 
 	:start-clock 0
 

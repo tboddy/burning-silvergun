@@ -120,7 +120,7 @@
 			(set enemy.clock (+ enemy.clock 1)))
 		(when (< enemy.x (+ g.width (/ enemy.size 2)))
 			(set enemy.visible true))
-		(when (< enemy.x (- 0 (/ enemy.size 2)))
+		(when (and enemy.visible (or (< enemy.y (- 0 enemy.size)) (> enemy.y (+ g.height enemy.size 2)) (< enemy.x (- 0 (/ enemy.size 2))) (> enemy.x (+ g.width enemy.size 2))))
 			(set enemy.active false)
 			(when enemy.collider
 				(hc.remove enemy.collider)

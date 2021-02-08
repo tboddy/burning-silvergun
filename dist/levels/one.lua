@@ -1387,20 +1387,22 @@ local function _1_()
     return nil
   end
 end
-local function _2_()
-  if (clock == 60) then
-    return boss_three()
-  end
-end
-enemy_sections = {_0_, _1_, _2_}
+enemy_sections = {_0_, _1_}
+local did_final = false
 local function update_enemies()
-  local func = enemy_sections[current_enemy_section]
-  func()
+  if enemy_sections[current_enemy_section] then
+    local func = enemy_sections[current_enemy_section]
+    func()
+  end
   if g["in-boss"] then
     if (g["enemy-count"] == 0) then
       g["in-boss"] = false
       clock = -60
       current_enemy_section = (current_enemy_section + 1)
+      if (not did_final and (current_enemy_section >= 3)) then
+        did_final = true
+        boss_three()
+      end
     end
   end
   if g["game-finished"] then
@@ -1439,7 +1441,7 @@ local function update_bgm()
     return nil
   end
 end
-local function _3_()
+local function _2_()
   update_enemies()
   if ((#block_layout > 0) and ((clock % 32) == 0)) then
     spawn_blocks()
@@ -1450,4 +1452,4 @@ local function _3_()
   clock = (clock + 1)
   return nil
 end
-return {update = _3_}
+return {update = _2_}
