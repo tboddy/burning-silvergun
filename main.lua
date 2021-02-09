@@ -9,12 +9,12 @@ hc = require 'lib.hc'
 g = require '_globals'
 controls = require 'controls'
 sound = require 'sound'
-entity = require 'entity'
+entities = require 'entities'
 -- start = require 'start'
 background = require 'background'
 -- classExplosion = require 'classes.explosion'
 -- classIndicator = require 'classes.indicator'
--- player = require 'player'
+player = require 'player'
 -- classEnemy = require 'classes.enemy'
 -- stage = require 'stage'
 -- chrome = require 'chrome'
@@ -26,7 +26,7 @@ background = require 'background'
 
 local loadGame = function()
 	background.load()
-	-- 	player.load()
+	player:load()
 	-- 	stage.load()
 end
 
@@ -58,6 +58,7 @@ love.load = function()
 	loadScore()
 	controls:load()
 	sound:load()
+	entities:load()
 	loadGame()
 	-- if g.started then g.loadGame else start.init end
 end
@@ -69,9 +70,6 @@ end
 
 local updateGame = function()
 	background.update()
-	if not g.gameOver then
-		-- player.update()
-	end
 	-- stage.update()
 	-- chrome.update()
 	if g.gameOver then g.gameOverClock = g.gameOverClock + 1 end
@@ -79,8 +77,8 @@ end
 
 local drawGame = function()
 	background.draw()
+	entities:draw()
 	-- stage.drawBlocks()
-	-- if not g.gameOver then player.draw() end
 	-- stage.draw()
 	-- chrome.draw()
 end
@@ -88,6 +86,7 @@ end
 love.update = function()
 	controls:update()
 	sound:update()
+	entities:update()
 	updateGame()
 	-- if g.started then updateGame() else start.update() end
 end

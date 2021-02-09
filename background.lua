@@ -45,7 +45,7 @@ return {
 		love.graphics.rectangle('fill', 0, 0, g.width, fadeY)
 		love.graphics.draw(images.fade, 0, fadeY)
 		g:setColor(fgColor)
-		love.graphics.draw(images.fade2, 0, g.height - images.fade2:getHeight() + g.grid * 4)
+		love.graphics.draw(images.fade2, 0, g.height - images.fade2:getHeight() + g.grid * 3)
 		g:resetColor()
 	end
 

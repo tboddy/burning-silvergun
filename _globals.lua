@@ -37,6 +37,7 @@ return {
 	tickRate = 1 / 60,
 	gameOverClock = 0,
 	started = true,
+	collisionDebug = false,
 
 	toggleFullscreen = function()
 		local isFullscreen = love.window.getFullscreen()
@@ -83,6 +84,10 @@ return {
 			arr[file] = img
 		end
 		return arr
+	end,
+
+	img = function(image, pos)
+		love.graphics.draw(image, pos.x, pos.y, 0, 1, 1, image:getWidth() / 2, image:getHeight() / 2)
 	end,
 
 	vector = function(vX, vY)
