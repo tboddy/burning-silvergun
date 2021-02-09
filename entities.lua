@@ -37,14 +37,14 @@ return {
 
 	update = function() 
 		for i, entity in ipairs(entities) do
-			if entity.active then entity.update(entity) end
+			if entity.active then entity:update(entity) end
 		end
 	end,
 
 	draw = function()
 		for i, entity in ipairs(entities) do
 			if entity.active and entity.seen then
-				entity.draw(entity)
+				entity:draw(entity)
 				if g.collisionDebug and entity.collider then
 					g:setColor('green')
 					love.graphics.circle('fill', entity.vector.x, entity.vector.y, entity.radius)

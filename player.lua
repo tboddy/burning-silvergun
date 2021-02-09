@@ -7,11 +7,9 @@ local speed, startSpeed, startLimit, startMod = 2, 2.25, 240, 0.05
 --------------------------------------
 
 local checkBounds = function(vector)
-	local modA, modB = 4, 3
-	if vector.x < modA then vector.x = modA
-	elseif vector.x > g.width - modB then vector.x = g.width - modB end
-	if vector.y < modA then vector.y = modA
-	elseif vector.y > g.height - modB then vector.y = g.height - modB end
+	local mod = 3
+	if vector.x < mod then vector.x = mod elseif vector.x > g.width - mod then vector.x = g.width - mod end
+	if vector.y < mod then vector.y = mod elseif vector.y > g.height - mod then vector.y = g.height - mod end
 end
 
 local moveControls = function(entity)
@@ -46,8 +44,6 @@ local updateMove = function(entity)
 end
 
 
-
-
 return {
 
 
@@ -78,7 +74,7 @@ return {
 	end,
 
 	draw = function(entity)
-		g.img(images.nitori, {x = entity.vector.x, y = entity.vector.y + 3})
+		g.img(images.nitori, {x = entity.vector.x, y = entity.vector.y + 4})
 		g.img(images.hitbox, entity.vector)
 	end
 
