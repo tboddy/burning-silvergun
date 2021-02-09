@@ -11,7 +11,7 @@ controls = require 'controls'
 sound = require 'sound'
 entity = require 'entity'
 -- start = require 'start'
--- background = require 'background'
+background = require 'background'
 -- classExplosion = require 'classes.explosion'
 -- classIndicator = require 'classes.indicator'
 -- player = require 'player'
@@ -25,9 +25,9 @@ entity = require 'entity'
 --------------------------------------
 
 local loadGame = function()
-	-- 	background.init()
-	-- 	player.init()
-	-- 	stage.init()
+	background.load()
+	-- 	player.load()
+	-- 	stage.load()
 end
 
 local loadScore = function()
@@ -68,7 +68,7 @@ end
 --------------------------------------
 
 local updateGame = function()
-	-- background.update()
+	background.update()
 	if not g.gameOver then
 		-- player.update()
 	end
@@ -78,7 +78,7 @@ local updateGame = function()
 end
 
 local drawGame = function()
-	-- background.draw()
+	background.draw()
 	-- stage.drawBlocks()
 	-- if not g.gameOver then player.draw() end
 	-- stage.draw()
@@ -94,6 +94,7 @@ end
 
 love.draw = function()
 	maid64.start()
+	drawGame()
 	-- if g.started then drawGame() else start.draw() end
 	maid64.finish()
 end

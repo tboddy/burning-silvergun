@@ -1,7 +1,3 @@
---------------------------------------
--- vars
---------------------------------------
-
 local sfxVolume, bgmVolume, sfxFiles, bgmFiles, sfxNames, bgmNames = 0.5, 1, {}, {},
 	{'bullet1', 'bullet2', 'bullet3', 'explosion1', 'explosion2', 'gameover', 'menuchange', 'playerhit', 'playershot', 'start', 'bonus'},
 	{'start', 'stage-intro', 'stage-loop'}

@@ -87,28 +87,3 @@
 
 	})
 
-
-; ------------------------------------
-; floor
-; ------------------------------------
-
-; (var floor-camera nil)
-; (var floor-x 0)
-; (var floor-speed 4)
-
-; (fn init-floor []
-;  (set floor-camera (playmat.newCamera g.width g.height 0 0 (* math.pi 1.5) 128 0.5 1)))
-
-; (fn update-floor []
-;  (set floor-x (- floor-x floor-speed)))
-
-; (fn draw-floor []
-;  (local y (* g.grid 9))
-;  (love.graphics.setScissor 0 y g.width (- g.height y))
-;  (g.set-color bg-color)
-;  (love.graphics.rectangle :fill 0 0 g.width g.height)
-;  (g.set-color fg-color)
-;  (playmat.drawPlane floor-camera images.bottom floor-x 0 1 1 true)
-;  (love.graphics.setScissor)
-;  (g.set-color bg-color)
-;  (g.mask :most (fn [] (love.graphics.draw images.fade 0 y))))
