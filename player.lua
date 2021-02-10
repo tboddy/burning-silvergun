@@ -35,9 +35,7 @@ end
 local moveStart = function(entity)
 	g.moveVector(entity.vector, 0, startSpeed)
 	startSpeed = startSpeed - startMod
-	if startSpeed <= 0 then
-		canMove = true
-	end
+	if startSpeed <= 0 then canMove = true end
 end
 
 local updateMove = function(entity)
@@ -53,17 +51,11 @@ end
 --------------------------------------
 
 local spawnBullets = function(entity)
-	if controls.input:get('shotOne') == 1 then
-		playerBullet:spawn(entity)
+	if controls.input:get('shotOne') == 1 then playerBullet:spawn(entity)
 	else
 		playerBullet:spawn(entity, true)
 		playerBullet:spawn(entity, true, true)
 	end
-
-	-- (when (= shot-type 1) (spawn-bullet 0 true))
-	-- (when (or (= shot-type 2) (= shot-type 3))
-	-- 	(spawn-bullet (- 0 shot-diff) nil)
-	-- 	(spawn-bullet shot-diff nil)))
 end
 
 local updateShot = function(entity)
@@ -75,9 +67,7 @@ local updateShot = function(entity)
 	local interval = 10 if controls.input:get('shotTwo') == 1 then interval = 15 end
 	local limit = interval
 	local max = interval
-	if not canShoot and shotClock % interval == 0 and shotClock < limit then
-		spawnBullets(entity)
-	end
+	if not canShoot and shotClock % interval == 0 and shotClock < limit then spawnBullets(entity) end
 	shotClock = shotClock + 1
 	if shotClock >= max then canShoot = true end
 end

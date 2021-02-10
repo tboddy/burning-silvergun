@@ -48,16 +48,14 @@ return {
 	------------------------------------
 
 	update = function(entity)
-		if entity.vector.x >= g.width + g.grid or entity.vector.y < -g.grid or entity.vector.y >= g.height + g.grid then
-			entity.active = false
-		end
+		if entity.vector.x >= g.width + g.grid or entity.vector.y < -g.grid or entity.vector.y >= g.height + g.grid then entity.active = false end
 		g.moveVector(entity.vector, entity.angle, entity.speed)
 	end,
 
 	draw = function(entity)
 		local img = 'bulletdouble' if entity.flags.homing then img = 'bullethoming' end
 		g.mask('half', function() g.img(images[img], entity.vector, entity.angle + math.pi / 2) end)
-	end,
+	end
 
 
 }
