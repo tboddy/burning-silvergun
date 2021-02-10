@@ -14,6 +14,7 @@ entities = require 'entities'
 background = require 'background'
 -- classExplosion = require 'classes.explosion'
 -- classIndicator = require 'classes.indicator'
+playerBullet = require 'playerbullet'
 player = require 'player'
 -- classEnemy = require 'classes.enemy'
 -- stage = require 'stage'
@@ -26,6 +27,7 @@ player = require 'player'
 
 local loadGame = function()
 	background.load()
+	playerBullet.load()
 	player:load()
 	-- 	stage.load()
 end

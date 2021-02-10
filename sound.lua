@@ -23,6 +23,7 @@ local processFiles = function(isBgm)
 			if names[i] == 'playershot' then files[names[i]]:setVolume(0.3)
 			elseif names[i] == 'bullet1' or names[i] == 'bullet2' or names[i] == 'bullet3' then files[names[i]]:setVolume(0.4) end
 		end
+		files[names[i]]:setVolume(0) -- mute
 	end
 end
 

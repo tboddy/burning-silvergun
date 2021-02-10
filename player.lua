@@ -1,5 +1,7 @@
-local images, canMove = nil, nil
+local images, canMove
 local speed, startSpeed, startLimit, startMod = 2, 2.25, 240, 0.05
+
+local shotClock, shotType, canShoot = 0, 1, true
 
 
 --------------------------------------
@@ -33,7 +35,9 @@ end
 local moveStart = function(entity)
 	g.moveVector(entity.vector, 0, startSpeed)
 	startSpeed = startSpeed - startMod
-	if startSpeed <= 0 then canMove = true end
+	if startSpeed <= 0 then
+		canMove = true
+	end
 end
 
 local updateMove = function(entity)
@@ -41,6 +45,41 @@ local updateMove = function(entity)
 		if canMove then moveControls(entity)
 		else moveStart(entity) end
 	end
+end
+
+
+--------------------------------------
+-- shooting
+--------------------------------------
+
+local spawnBullets = function(entity)
+	if controls.input:get('shotOne') == 1 then
+		playerBullet:spawn(entity)
+	else
+		playerBullet:spawn(entity, true)
+		playerBullet:spawn(entity, true, true)
+	end
+
+	-- (when (= shot-type 1) (spawn-bullet 0 true))
+	-- (when (or (= shot-type 2) (= shot-type 3))
+	-- 	(spawn-bullet (- 0 shot-diff) nil)
+	-- 	(spawn-bullet shot-diff nil)))
+end
+
+local updateShot = function(entity)
+	if canShoot and (controls.input:get('shotOne') == 1 or controls.input:get('shotTwo') == 1) then
+		shotType = 1 if controls.input:get('shotTwo') == 2 then shotType = 2 end
+		canShoot = false
+		shotClock = 0
+	end
+	local interval = 10 if controls.input:get('shotTwo') == 1 then interval = 15 end
+	local limit = interval
+	local max = interval
+	if not canShoot and shotClock % interval == 0 and shotClock < limit then
+		spawnBullets(entity)
+	end
+	shotClock = shotClock + 1
+	if shotClock >= max then canShoot = true end
 end
 
 
@@ -52,7 +91,7 @@ return {
 	------------------------------------
 
 	load = function(self)
-		images = g.images('player', {'nitori', 'hitbox', 'bullet-double', 'bullet-single', 'bullet-homing'})
+		images = g.images('player', {'nitori', 'hitbox'})
 		entities:spawn(function(entity)
 			entity.type = 'player'
 			entity.vector = g.vector(-(images.nitori:getWidth() / 2), g.width / 2)
@@ -71,6 +110,7 @@ return {
 
 	update = function(entity)
 		updateMove(entity)
+		if canMove then updateShot(entity) end
 	end,
 
 	draw = function(entity)

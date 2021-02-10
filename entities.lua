@@ -26,6 +26,8 @@ return {
 		entity.hit = false
 		entity.radius = 1
 		entity.collider = false
+		entity.angle = 0
+		entity.speed = 1
 		entity.flags = {}
 		init(entities[index])
 	end,

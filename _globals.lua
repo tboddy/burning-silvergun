@@ -76,6 +76,8 @@ return {
 	-- helpers
 	--------------------------------------
 
+	phi = 1.61803398875,
+
 	images = function(dir, files)
 		local arr = {}
 		for i, file in ipairs(files) do
@@ -86,14 +88,19 @@ return {
 		return arr
 	end,
 
-	img = function(image, pos)
-		love.graphics.draw(image, pos.x, pos.y, 0, 1, 1, image:getWidth() / 2, image:getHeight() / 2)
+	img = function(image, pos, eRotation)
+		local rotation = 0 if eRotation then rotation = eRotation end
+		love.graphics.draw(image, pos.x, pos.y, rotation, 1, 1, image:getWidth() / 2, image:getHeight() / 2)
 	end,
 
 	vector = function(vX, vY)
 		local x = 0 if vX then x = vX end
 		local y = 0 if vY then y = vY end
 		return {x = x, y = y}
+	end,
+
+	cloneVector = function(inputVector)
+		return {x = inputVector.x, y = inputVector.y}
 	end,
 
 	moveVector = function(vector, angle, speed)
