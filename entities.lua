@@ -28,6 +28,7 @@ return {
 		entity.collider = false
 		entity.angle = 0
 		entity.speed = 1
+		entity.clock =0
 		entity.flags = {}
 		init(entities[index])
 	end,
@@ -37,9 +38,13 @@ return {
 	-- loop
 	------------------------------------
 
-	update = function() 
+	update = function()
+		g.debugCounts = {}
 		for i, entity in ipairs(entities) do
-			if entity.active then entity:update(entity) end
+			if entity.active then
+				entity:update(entity)
+				entity.clock = entity.clock + 1
+			end
 		end
 	end,
 

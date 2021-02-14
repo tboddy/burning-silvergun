@@ -1,9 +1,12 @@
-local images, bgQuad, cloudsQuad
+playmat = require 'lib.playmat'
+
+local images, bottomCamera, topCamera
 local bgColor, fgColor = 'black', 'purple'
-local bgAngle, cloudsAngle = math.pi * 0.01, math.pi * 0.02
-local bgPos, cloudsPos = g.vector(), g.vector()
-local bgSpeed, cloudsSpeed = 1, 2
-local fadeY = 8
+local cameraZoom, cameraRotation = 256, math.pi * .575
+local bgPos, fgPos = g.vector(), g.vector()
+local bgAngle, fgAngle = math.pi * 0.01, math.pi * 0.02
+local bgSpeed, fgSpeed = 5, 10
+local fadeY, bottomHeight = g.grid * 5, g.height / 4
 
 
 return {
@@ -17,8 +20,8 @@ return {
 		images = g.images('bg', {'bottom', 'top', 'fade', 'fade2'})
 		images.bottom:setWrap('repeat', 'repeat')
 		images.top:setWrap('repeat', 'repeat')
-		bgQuad = love.graphics.newQuad(0, 0, g.width, g.height, images.bottom)
-		cloudsQuad = love.graphics.newQuad(0, 0, g.width, g.height, images.top)
+		bottomCamera = playmat.newCamera(g.width, g.height, 0, 0, cameraRotation, cameraZoom, 1, 1)
+		topCamera = playmat.newCamera(g.width, g.height, 0, 0, cameraRotation, cameraZoom, 1, 1)
 	end,
 
 
@@ -29,9 +32,7 @@ return {
 	update = function()
 		if not g.paused then
 			g.moveVector(bgPos, bgAngle, bgSpeed)
-			g.moveVector(cloudsPos	, cloudsAngle, cloudsSpeed)
-			bgQuad:setViewport(bgPos.x, bgPos.y, g.width, g.height, images.bottom:getWidth(), images.bottom:getHeight())
-			cloudsQuad:setViewport(cloudsPos.x, cloudsPos.y, g.width, g.height, images.top:getWidth(), images.top:getHeight())
+			g.moveVector(fgPos, fgAngle, fgSpeed)
 		end
 	end,
 
@@ -39,13 +40,13 @@ return {
 		g:setColor(bgColor)
 		love.graphics.rectangle('fill', 0, 0, g.width, g.height)
 		g:setColor(fgColor)
-		g.mask('half', function() love.graphics.draw(images.bottom, bgQuad, 0, 0) end)
-		g.mask('quarter', function() love.graphics.draw(images.top, cloudsQuad, 0, 0) end)
+		g.mask('half', function() playmat.drawPlane(bottomCamera, images.bottom, bgPos.x, bgPos.y, 1, 1, true) end)
+		g.mask('quarter', function() playmat.drawPlane(topCamera, images.top, fgPos.x, fgPos.y, 1, 1, true) end)
 		g:setColor(bgColor)
 		love.graphics.rectangle('fill', 0, 0, g.width, fadeY)
 		love.graphics.draw(images.fade, 0, fadeY)
 		g:setColor(fgColor)
-		love.graphics.draw(images.fade2, 0, g.height - images.fade2:getHeight() + g.grid * 3)
+		love.graphics.draw(images.fade2, 0, g.height - images.fade2:getHeight() + g.grid * 5)
 		g:resetColor()
 	end
 

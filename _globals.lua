@@ -20,6 +20,8 @@ return {
 	width = 256,
 	height = 240,
 	grid = 16,
+	font = love.graphics.newFont('fonts/atari-st.ttf', 8),
+	fontBig = love.graphics.newFont('fonts/atari-st-8x16.ttf', 14),
 
 
 	--------------------------------------
@@ -130,7 +132,33 @@ return {
 		love.graphics.setStencilTest('greater', 0)
 		callback()
 		love.graphics.setStencilTest()
-	end
+	end,
 
+
+	--------------------------------------
+	-- label
+	--------------------------------------
+
+	label = function(self, input, lX, y, lAlign, lLimit, big)
+		local x = 0 if lX then x = lX end
+		local align = 'left' if lAlign then align = lAlign end
+		local limit = g.width if lLimit then limit = lLimit end
+		love.graphics.setFont(self.font) if big then love.graphics.setFont(self.fontBig) end
+		love.graphics.setColor(self.colors.offWhite)
+		love.graphics.printf(input, x, y, limit, align)
+		self:resetColor()
+	end,
+
+	-- 	(label-shadows input x y limit align)
+	-- 	(love.graphics.printf input x y limit align)
+	-- 	(when overlay (label-overlay input x y limit align big))
+	-- 	(clear-color))
+
+
+	--------------------------------------
+	-- debug
+	--------------------------------------
+
+	playerBulletCount = 0
 
 }

@@ -33,11 +33,13 @@ return {
 			entity.update = self.update
 			entity.draw = self.draw
 			entity.angle = angle
-			entity.speed = images.bulletdouble:getWidth()
+			entity.speed = images.bulletdouble:getWidth() + 4
 			if homing then
 				entity.flags.homing = true
 				entity.speed = images.bullethoming:getWidth() / 2
 				entity.radius = 6
+			else 
+				entity.vector.x = entity.vector.x - 12
 			end
 		end)
 	end,
@@ -54,7 +56,7 @@ return {
 
 	draw = function(entity)
 		local img = 'bulletdouble' if entity.flags.homing then img = 'bullethoming' end
-		g.mask('half', function() g.img(images[img], entity.vector, entity.angle + math.pi / 2) end)
+		g.mask('half', function() g.img(images[img], entity.vector, entity.angle) end)
 	end
 
 

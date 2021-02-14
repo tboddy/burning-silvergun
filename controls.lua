@@ -37,10 +37,10 @@ return {
 			self.doingPause = true
 			if g.paused then
 				g.paused = false
-				sound:stopBgm()
+				-- sound:stopBgm()
 			else
 				g.paused = true
-				sound:startBgm('stage-loop')
+				-- sound:startBgm('stage-loop')
 			end
 		elseif self.input:get('pause') == 0 then self.doingPause = false end
 	end,

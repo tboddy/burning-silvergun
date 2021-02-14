@@ -1,5 +1,5 @@
 local images, canMove
-local speed, startSpeed, startLimit, startMod = 2, 2.25, 240, 0.05
+local speed, startSpeed, startLimit, startMod = 2, 3.2, 240, 0.1
 
 local shotClock, shotType, canShoot = 0, 1, true
 
@@ -9,8 +9,9 @@ local shotClock, shotType, canShoot = 0, 1, true
 --------------------------------------
 
 local checkBounds = function(vector)
-	local mod = 3
-	if vector.x < mod then vector.x = mod elseif vector.x > g.width - mod then vector.x = g.width - mod end
+	local mod = images.hitbox:getWidth() / 2
+	local xStart, xLimit = 0, g.width
+	if vector.x < xStart + mod then vector.x = xStart + mod elseif vector.x > xLimit - mod then vector.x = xLimit - mod end
 	if vector.y < mod then vector.y = mod elseif vector.y > g.height - mod then vector.y = g.height - mod end
 end
 
@@ -51,7 +52,7 @@ end
 --------------------------------------
 
 local spawnBullets = function(entity)
-	if controls.input:get('shotOne') == 1 then playerBullet:spawn(entity)
+	if controls.input:get('shotOne') == 1 and controls.input:get('shotTwo') == 0 then playerBullet:spawn(entity)
 	else
 		playerBullet:spawn(entity, true)
 		playerBullet:spawn(entity, true, true)
@@ -84,7 +85,7 @@ return {
 		images = g.images('player', {'nitori', 'hitbox'})
 		entities:spawn(function(entity)
 			entity.type = 'player'
-			entity.vector = g.vector(-(images.nitori:getWidth() / 2), g.width / 2)
+			entity.vector = g.vector(g.grid * -1, g.height / 2)
 			entity.seen = true
 			entity.collider = true
 			entity.radius = 1
@@ -98,13 +99,13 @@ return {
 	-- loop
 	------------------------------------
 
-	update = function(entity)
+	update = function(self, entity)
 		updateMove(entity)
 		if canMove then updateShot(entity) end
 	end,
 
 	draw = function(entity)
-		g.img(images.nitori, {x = entity.vector.x, y = entity.vector.y + 4})
+		g.img(images.nitori, {x = entity.vector.x + 1, y = entity.vector.y + 4})
 		g.img(images.hitbox, entity.vector)
 	end
 

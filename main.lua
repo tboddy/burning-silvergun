@@ -16,9 +16,9 @@ background = require 'background'
 -- classIndicator = require 'classes.indicator'
 playerBullet = require 'playerbullet'
 player = require 'player'
--- classEnemy = require 'classes.enemy'
--- stage = require 'stage'
--- chrome = require 'chrome'
+enemy = require 'enemy'
+stage = require 'stage'
+chrome = require 'chrome'
 
 
 --------------------------------------
@@ -29,6 +29,7 @@ local loadGame = function()
 	background.load()
 	playerBullet.load()
 	player:load()
+	enemy:load()
 	-- 	stage.load()
 end
 
@@ -47,8 +48,8 @@ love.load = function()
 	love.window.setTitle('burning silvergun redux')
 	local windowConfig = {
 		vsync = false,
-		x = 128,
-		y = 128,
+		x = 64,
+		y = 0,
 		minwidth = g.width,
 		minheight = g.height,
 		resizable = true
@@ -72,8 +73,8 @@ end
 
 local updateGame = function()
 	background.update()
-	-- stage.update()
-	-- chrome.update()
+	stage.update()
+	chrome.update()
 	if g.gameOver then g.gameOverClock = g.gameOverClock + 1 end
 end
 
@@ -82,7 +83,7 @@ local drawGame = function()
 	entities:draw()
 	-- stage.drawBlocks()
 	-- stage.draw()
-	-- chrome.draw()
+	chrome.draw()
 end
 
 love.update = function()
